@@ -41,6 +41,45 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-ripple: ripple 2s ease calc(var(--i, 0) * 0.2s) infinite;
+  --animate-orbit: orbit calc(var(--duration) * 1s) linear infinite;
+  --radius: var(----radius);
+  --color-btn-border: var(----btn-border);
+  --color-skeleton: var(----skeleton);
+
+  @keyframes ripple {
+    0%, 100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
+
+  @keyframes orbit {
+    0% {
+      transform: rotate(0deg) translateY(calc(var(--radius) * 1px)) rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg);
+    }
+  }
+  @keyframes ripple {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    }
+  50% {
+    transform: translate(-50%, -50%) scale(0.9);
+    }
+  }
+  @keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateY(calc(var(--radius) * 1px)) rotate(0deg);
+    }
+  100% {
+    transform: rotate(360deg) translateY(calc(var(--radius) * 1px)) rotate(-360deg);
+    }
+  }
 }
 
 :root {
@@ -76,6 +115,8 @@
   --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
   --sidebar-border: oklch(0.928 0.006 264.531);
   --sidebar-ring: oklch(0.707 0.022 261.325);
+  --skeleton: hsl(0, 0%, 90%);
+  --btn-border: hsl(214deg, 31.8%, 91.4%);
 }
 
 .dark {
@@ -110,6 +151,9 @@
   --sidebar-accent-foreground: oklch(0.985 0.002 247.839);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --skeleton: hsl(218, 36%, 16%);
+  --btn-border: hsl(217deg, 32.6%, 17.5%);
+  --radius: 0.5rem;
 }
 
 @layer base {
