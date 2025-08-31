@@ -205,7 +205,7 @@ export default function Page() {
             {
                 label: 'Email',
                 required: true,
-                type: 'email' as 'email',
+                type: 'email' as const,
                 placeholder: 'Enter your email address',
                 onChange: (event: ChangeEvent<HTMLInputElement>) =>
                     handleInputChange(event, 'email'),
@@ -213,7 +213,7 @@ export default function Page() {
             {
                 label: 'Password',
                 required: true,
-                type: 'password' as 'password',
+                type: 'password' as const,
                 placeholder: 'Enter your password',
                 onChange: (event: ChangeEvent<HTMLInputElement>) =>
                     handleInputChange(event, 'password'),
