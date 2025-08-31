@@ -1,8 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Globe, AlertTriangle, Satellite, LayoutDashboard, Brain } from "lucide-react"
+import { CometCard } from "@/components/ui/comet-card";
 
 const features = [
   {
@@ -34,7 +35,7 @@ const features = [
 
 const CoreFeatures = () => {
   return (
-    <section className="w-full py-20 px-6 bg-background">
+    <section className="w-full py-20 px-6 bg-background" id="features">
       <div className="max-w-6xl mx-auto text-center mb-12">
         <motion.h2
           initial={{ opacity: 0, y: -20 }}
@@ -61,18 +62,19 @@ const CoreFeatures = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="rounded-2xl shadow-md hover:shadow-xl transition">
-                <CardHeader className="flex flex-row items-center gap-3">
-                  <div className="p-3 rounded-full bg-primary/10 text-primary">
-                    <Icon className="h-6 w-6" />
+              <CometCard className="rounded-2xl shadow-md hover:shadow-2xl transition p-8 md:p-12 w-full max-w-xl mx-auto">
+                <CardHeader className="flex flex-row items-center gap-5">
+                  <div className="p-5 md:p-6 rounded-full bg-primary/10 text-primary">
+                    <Icon className="h-8 w-8 md:h-10 md:w-10" />
                   </div>
-                  <CardTitle>{feature.title}</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <p className="text-base md:text-lg text-muted-foreground">{feature.description}</p>
                 </CardContent>
-              </Card>
+              </CometCard>
             </motion.div>
+
           )
         })}
       </div>

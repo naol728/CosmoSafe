@@ -16,10 +16,9 @@ const NavigationMenu = ({
     logoText = "CosmoSafe",
     links = [
         { name: "Home", href: "/" },
-        { name: "About", href: "/about" },
-        { name: "Features", href: "/features" },
-        { name: "Pricing", href: "/pricing" },
-        { name: "Contact", href: "/contact" },
+        { name: "Features", href: "#features" },
+        { name: "Pricing", href: "#pricing" },
+        { name: "Contact", href: "#contact" },
     ],
     signInText = "Sign In",
     signUpText = "Sign Up",
@@ -33,6 +32,22 @@ const NavigationMenu = ({
             <div className="flex items-center justify-between px-6 py-3 
         bg-background/70 backdrop-blur-md border border-border 
         rounded-full shadow-lg w-full max-w-6xl relative">
+
+                {/* Center Logo */}
+                <div className="flex items-center justify-center flex-1  md:flex-none">
+                    <motion.div
+                        className="flex items-center"
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        whileHover={{ rotate: 5 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="w-8 h-8 mr-2 bg-primary rounded-full flex items-center justify-center">
+                            <span className="text-primary-foreground font-bold text-sm">L</span>
+                        </div>
+                        <span className="text-lg font-bold text-foreground">{logoText}</span>
+                    </motion.div>
+                </div>
 
                 {/* Left Navigation */}
                 <nav className="hidden md:flex items-center space-x-8">
@@ -54,21 +69,7 @@ const NavigationMenu = ({
                     ))}
                 </nav>
 
-                {/* Center Logo */}
-                <div className="flex items-center justify-center flex-1 md:flex-none">
-                    <motion.div
-                        className="flex items-center"
-                        initial={{ scale: 0.8 }}
-                        animate={{ scale: 1 }}
-                        whileHover={{ rotate: 5 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <div className="w-8 h-8 mr-2 bg-primary rounded-full flex items-center justify-center">
-                            <span className="text-primary-foreground font-bold text-sm">L</span>
-                        </div>
-                        <span className="text-lg font-bold text-foreground">{logoText}</span>
-                    </motion.div>
-                </div>
+
 
                 {/* Right Auth Buttons */}
                 <div className="hidden md:flex items-center space-x-4">
