@@ -14,11 +14,11 @@ const eslintConfig = [
   {
     ignores: [
       "node_modules/**",
-      ".next/**", // ⬅️ Ignore Next.js build output
+      ".next/**",
       "out/**",
       "build/**",
-      "next-env.d.ts", // ⬅️ Ignore Next.js env typings
-      "**/*.d.ts", // ⬅️ Ignore type definition files
+      "next-env.d.ts",
+      "**/*.d.ts",
     ],
     rules: {
       "@typescript-eslint/prefer-as-const": "off",
