@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 import { pool } from "./db/db";
 import express from "express";
 import cors from "cors";
-import authRoutes from "./routes/authRoute";
+import authRoutes from "./auth/auth.routes";
 
 pool
   .connect()
@@ -20,7 +20,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use("/auth", authRoutes);
+app.use("/api", authRoutes);
 
 const PORT = process.env.PORT ?? 5000;
 
