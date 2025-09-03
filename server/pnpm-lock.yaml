@@ -25,7 +25,10 @@ importers:
         version: 17.2.1
       drizzle-orm:
         specifier: ^0.44.5
-        version: 0.44.5(pg@8.16.3)
+        version: 0.44.5(@types/pg@8.15.5)(pg@8.16.3)
+      drizzle-orm-pg:
+        specifier: ^0.16.3
+        version: 0.16.3(@types/pg@8.15.5)(drizzle-orm@0.44.5(@types/pg@8.15.5)(pg@8.16.3))(pg@8.16.3)
       express:
         specifier: ^5.1.0
         version: 5.1.0
@@ -48,6 +51,9 @@ importers:
       '@types/node':
         specifier: ^24.3.0
         version: 24.3.0
+      '@types/pg':
+        specifier: ^8.15.5
+        version: 8.15.5
       nodemon:
         specifier: ^3.1.10
         version: 3.1.10
@@ -137,6 +143,9 @@ packages:
 
   '@types/node@24.3.0':
     resolution: {integrity: sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==}
+
+  '@types/pg@8.15.5':
+    resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
 
   '@types/phoenix@1.6.6':
     resolution: {integrity: sha512-PIzZZlEppgrpoT2QgbnDU+MMzuR6BbCjllj0bM70lWoejMeNJAxCchxnv7J3XFkI8MpygtRpzXrIlmWUBclP5A==}
@@ -317,6 +326,25 @@ packages:
   dotenv@17.2.1:
     resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
     engines: {node: '>=12'}
+
+  drizzle-orm-pg@0.16.3:
+    resolution: {integrity: sha512-KohmZ3AbDP6waq3AG6+fMK7dkCmLJo2lWThioLDluveY/6E4Y44YLaWiZKg3dtq/SaawnyMa9jOy6FqLw29xyQ==}
+    deprecated: This package is merged into drizzle-orm starting from 0.17.0. See https://www.npmjs.com/package/drizzle-orm
+    peerDependencies:
+      '@neondatabase/serverless': '>=0.1 <0.2'
+      '@types/pg': '>=8 <9'
+      drizzle-orm: '>=0.16 <0.17'
+      pg: '>=8 <9'
+      postgres: '>=3 <4'
+    peerDependenciesMeta:
+      '@neondatabase/serverless':
+        optional: true
+      '@types/pg':
+        optional: true
+      pg:
+        optional: true
+      postgres:
+        optional: true
 
   drizzle-orm@0.44.5:
     resolution: {integrity: sha512-jBe37K7d8ZSKptdKfakQFdeljtu3P2Cbo7tJoJSVZADzIKOBo9IAJPOmMsH2bZl90bZgh8FQlD8BjxXA/zuBkQ==}
@@ -1144,6 +1172,12 @@ snapshots:
     dependencies:
       undici-types: 7.10.0
 
+  '@types/pg@8.15.5':
+    dependencies:
+      '@types/node': 24.3.0
+      pg-protocol: 1.10.3
+      pg-types: 2.2.0
+
   '@types/phoenix@1.6.6': {}
 
   '@types/qs@6.14.0': {}
@@ -1318,8 +1352,16 @@ snapshots:
 
   dotenv@17.2.1: {}
 
-  drizzle-orm@0.44.5(pg@8.16.3):
+  drizzle-orm-pg@0.16.3(@types/pg@8.15.5)(drizzle-orm@0.44.5(@types/pg@8.15.5)(pg@8.16.3))(pg@8.16.3):
+    dependencies:
+      drizzle-orm: 0.44.5(@types/pg@8.15.5)(pg@8.16.3)
     optionalDependencies:
+      '@types/pg': 8.15.5
+      pg: 8.16.3
+
+  drizzle-orm@0.44.5(@types/pg@8.15.5)(pg@8.16.3):
+    optionalDependencies:
+      '@types/pg': 8.15.5
       pg: 8.16.3
 
   dunder-proto@1.0.1:
