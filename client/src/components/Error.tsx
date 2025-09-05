@@ -1,4 +1,3 @@
-import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ interface ErrorComponentProps {
     onRetry?: () => void;
 }
 
-export default function ErrorComponent({ message = "Something went wrong.", onRetry }: ErrorComponentProps) {
+export default function Error({ message = "Something went wrong.", onRetry }: ErrorComponentProps) {
     return (
         <div className="flex justify-center items-center h-full">
             <Card className="max-w-sm w-full border-red-500">

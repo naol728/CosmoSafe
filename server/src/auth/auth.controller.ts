@@ -47,7 +47,6 @@ export async function requestOtp(req: Request, res: Response) {
   return res.json({ message: "OTP sent to email" });
 }
 
-//  i should send the email and the token to varify the otp
 export async function verifyOtp(req: Request, res: Response) {
   const { email, token } = req.body;
   const { data, error } = await supabase.auth.verifyOtp({
@@ -63,7 +62,6 @@ export async function verifyOtp(req: Request, res: Response) {
   if (existing.length === 0) {
     await db.insert(users).values({ email });
   }
-  console.log(data.session);
   return res.json({
     message: "User authenticated successfully",
     user: data.user,
