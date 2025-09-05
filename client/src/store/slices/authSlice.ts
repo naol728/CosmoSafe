@@ -29,7 +29,7 @@ export const fetchUser = createAsyncThunk(
   "auth/fetchUser",
   async (_, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("session");
+      const token = Cookies.get("token");
       if (!token) return rejectWithValue("No token found");
 
       const res = await me();

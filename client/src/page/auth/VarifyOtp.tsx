@@ -29,7 +29,7 @@ export default function VerifyOtp() {
     onSuccess: (res) => {
       if (res.status === 200) {
         toast.success(res.data.message)
-        Cookies.set("session", res.data.session, { expires: 7 })
+        Cookies.set("token", res.data.session)
         dispatch(loginSuccess({ email: params.email ?? "" }))
         navigate(`/dashboard`)
       }

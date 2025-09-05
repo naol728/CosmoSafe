@@ -10,8 +10,8 @@ import {
 import { cn } from "@/lib/utils";
 
 export const CometCard = ({
-  rotateDepth = 17.5,
-  translateDepth = 20,
+  rotateDepth = 15,
+  translateDepth = 25,
   className,
   children,
 }: {
@@ -25,8 +25,8 @@ export const CometCard = ({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
+  const mouseXSpring = useSpring(x, { stiffness: 200, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 200, damping: 30 });
 
   const rotateX = useTransform(
     mouseYSpring,
@@ -53,21 +53,24 @@ export const CometCard = ({
   const glareX = useTransform(mouseXSpring, [-0.5, 0.5], [0, 100]);
   const glareY = useTransform(mouseYSpring, [-0.5, 0.5], [0, 100]);
 
-  const glareBackground = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.9) 10%, rgba(255, 255, 255, 0.75) 20%, rgba(255, 255, 255, 0) 80%)`;
+  const glareBackground = useMotionTemplate`
+    radial-gradient(
+      circle at ${glareX}% ${glareY}%,
+      rgba(255,255,255,0.9) 10%,
+      rgba(255,255,255,0.4) 30%,
+      rgba(255,255,255,0) 80%
+    )
+  `;
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
-
-    const width = rect.width;
-    const height = rect.height;
-
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
+    const xPct = mouseX / rect.width - 0.5;
+    const yPct = mouseY / rect.height - 0.5;
 
     x.set(xPct);
     y.set(yPct);
@@ -90,24 +93,31 @@ export const CometCard = ({
           translateX,
           translateY,
           boxShadow:
-            "rgba(0, 0, 0, 0.01) 0px 520px 146px 0px, rgba(0, 0, 0, 0.04) 0px 333px 133px 0px, rgba(0, 0, 0, 0.26) 0px 83px 83px 0px, rgba(0, 0, 0, 0.29) 0px 21px 46px 0px",
+            "0 30px 60px -10px rgba(0,0,0,0.4), 0 18px 36px -18px rgba(0,0,0,0.4)",
         }}
-        initial={{ scale: 1, z: 0 }}
+        initial={{ scale: 1 }}
         whileHover={{
-          scale: 1.05,
-          z: 50,
-          transition: { duration: 0.2 },
+          scale: 1.07,
+          z: 60,
+          transition: { duration: 0.25, ease: "easeOut" },
         }}
-        className="relative rounded-2xl"
+        className="relative rounded-2xl border border-white/10 bg-gradient-to-br from-background to-muted/40 p-[2px] overflow-hidden group"
       >
-        {children}
+        {/* Animated gradient border */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary via-purple-500 to-pink-500 opacity-70 blur-xl animate-pulse" />
+
+        {/* Card content */}
+        <div className="relative z-10 rounded-[1rem] bg-background/70 backdrop-blur-xl p-6">
+          {children}
+        </div>
+
+        {/* Dynamic glare */}
         <motion.div
-          className="pointer-events-none absolute inset-0 z-50 h-full w-full rounded-[16px] mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 z-20 rounded-[1rem] mix-blend-overlay"
           style={{
             background: glareBackground,
-            opacity: 0.6,
+            opacity: 0.5,
           }}
-          transition={{ duration: 0.2 }}
         />
       </motion.div>
     </div>
