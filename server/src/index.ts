@@ -6,7 +6,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import authRoutes from "./auth/auth.routes";
-
+import earthRoutes from "./routes/earthRoute";
 pool
   .connect()
   .then((client) => {
@@ -18,11 +18,12 @@ pool
   });
 
 const app = express();
-
+app.use(morgan(":method :url :status :response-time ms"));
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
-app.use(morgan(":method :url :status :response-time ms"));
+app.use("/api/earth", earthRoutes);
+
 const PORT = process.env.PORT ?? 5000;
 
 app.listen(PORT, () => {

@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import { useAppSelector } from "@/store/hook";
 import { Loading } from "./Loading";
 
 export function ProtectedRoute() {
     const { loading } = useAppSelector((state) => state.auth);
-    const session = Cookies.get("token");
+    const session = localStorage.getItem("access_token");
 
     if (loading) return <Loading />
 
