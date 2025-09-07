@@ -10,7 +10,7 @@ import { useMutation } from "@tanstack/react-query"
 import { verifyOtp } from "@/services/authService"
 import { toast } from "sonner"
 import { useNavigate } from "react-router-dom"
-import Cookies from "js-cookie"
+// import Cookies from "js-cookie"
 
 import { loginSuccess } from "@/store/slices/authSlice"
 import { useAppDispatch, useAppSelector } from "@/store/hook"
@@ -28,11 +28,17 @@ export default function VerifyOtp() {
     mutationFn: verifyOtp,
     onSuccess: (res) => {
       if (res.status === 200) {
-        toast.success(res.data.message)
-        Cookies.set("token", res.data.session)
-        dispatch(loginSuccess({ email: params.email ?? "" }))
-        navigate(`/dashboard`)
+        toast.success(res.data.message);
+
+        const session = res.data.session;
+        localStorage.setItem("access_token", session.access_token);
+        localStorage.setItem("refresh_token", session.refresh_token);
+        localStorage.setItem("expires_at", session.expires_at);
+
+        dispatch(loginSuccess({ email: params.email ?? "" }));
+        navigate(`/dashboard`);
       }
+
     },
     onError: (error: unknown) => {
       if (error && typeof error === "object" && "message" in error) {

@@ -7,6 +7,12 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useEffect } from "react";
 import { fetchUser } from "./store/slices/authSlice";
 import { useAppDispatch } from "./store/hook";
+import Layout from "./page/dashboard/Layout";
+import Dashboard from "./page/dashboard/Dashboard";
+import Earth from "./page/dashboard/earth/Earth";
+import Space from "./page/dashboard/space/Space";
+import Search from "./page/dashboard/search/Search";
+import Setting from "./page/dashboard/setting/Setting";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -22,7 +28,16 @@ function App() {
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/varify-otp/:email" element={<VarifyOtp />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<>dashboard</>} />
+          <Route path="/dashboard" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="earth" element={<Earth />} />
+            <Route path="space" element={<Space />} />
+            <Route path="alert" element={<>Alert</>} />
+            <Route path="insights" element={<>ai insight</>} />
+            <Route path="images" element={<>images</>} />
+            <Route path="search" element={<Search />} />
+            <Route path="Settings" element={<Setting />} />
+          </Route>
         </Route>
       </Routes>
       <Toaster position="top-center" />
