@@ -15,5 +15,9 @@ export function useWeather({ page, search, location, limit }: Params) {
       }),
     enabled: !!location,
   });
-  return { weather: data, weatherloading: isLoading, weathererr: isError };
+  return {
+    weather: data?.weather,
+    weatherloading: isLoading,
+    weathererr: isError,
+  };
 }

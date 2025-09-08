@@ -1,12 +1,12 @@
-import { getDisaster } from "@/services/earthService";
 import { useQuery } from "@tanstack/react-query";
 import type { Params } from "./type";
+import { getCarbon } from "@/services/earthService";
 
-export function useDisaster({ page, search, location, limit }: Params) {
+export function useCarbon({ page, search, location, limit }: Params) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["disaster", page, search, location],
+    queryKey: ["carbon"],
     queryFn: () =>
-      getDisaster({
+      getCarbon({
         page,
         limit,
         search,
@@ -15,5 +15,5 @@ export function useDisaster({ page, search, location, limit }: Params) {
       }),
     enabled: !!location,
   });
-  return { disaster: data, loadingdiaster: isLoading, disastererr: isError };
+  return { carbon: data?.carbon, carbonloading: isLoading, carbonerr: isError };
 }

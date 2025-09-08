@@ -1,12 +1,12 @@
+import { getDisaster } from "@/services/earthService";
 import { useQuery } from "@tanstack/react-query";
 import type { Params } from "./type";
-import { getFlood } from "@/services/earthService";
 
-export function useFlood({ page, search, location, limit }: Params) {
+export function useDisaster({ page, search, location, limit }: Params) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["flood"],
+    queryKey: ["disaster", page, search, location],
     queryFn: () =>
-      getFlood({
+      getDisaster({
         page,
         limit,
         search,
@@ -15,5 +15,9 @@ export function useFlood({ page, search, location, limit }: Params) {
       }),
     enabled: !!location,
   });
-  return { flood: data, floodloading: isLoading, flooderr: isError };
+  return {
+    disaster: data?.disasters,
+    loadingdiaster: isLoading,
+    disastererr: isError,
+  };
 }

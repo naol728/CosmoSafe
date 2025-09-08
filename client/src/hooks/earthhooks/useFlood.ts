@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Params } from "./type";
-import { getCarbon } from "@/services/earthService";
+import { getFlood } from "@/services/earthService";
 
-export function useCarbon({ page, search, location, limit }: Params) {
+export function useFlood({ page, search, location, limit }: Params) {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["carbon"],
+    queryKey: ["flood"],
     queryFn: () =>
-      getCarbon({
+      getFlood({
         page,
         limit,
         search,
@@ -15,5 +15,5 @@ export function useCarbon({ page, search, location, limit }: Params) {
       }),
     enabled: !!location,
   });
-  return { carbon: data, carbonloading: isLoading, carbonerr: isError };
+  return { flood: data?.flood, floodloading: isLoading, flooderr: isError };
 }
