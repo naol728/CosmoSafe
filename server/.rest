@@ -1,7 +1,4 @@
-POST http://localhost:8000/api/auth/varify-otp
+get http://localhost:8000/api/earth/earthquake?lat=38&lng=13
 Content-Type: application/json
 
-{
-    "email": "naolmeseret22@gmail.com",
-    "token":"797028"
-}
+

@@ -61,7 +61,7 @@ export async function verifyOtp(req: Request, res: Response) {
 
   const existing = await db.select().from(users).where(eq(users.email, email));
   if (existing.length === 0) {
-    await db.insert(users).values({ email });
+    await db.insert(users).values({ id: data.user.id, email });
   }
 
   const session = data.session;
