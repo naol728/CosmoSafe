@@ -7,6 +7,7 @@ import {
   doublePrecision,
   integer,
   uuid,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -29,4 +30,18 @@ export const earthquakes = pgTable("earthquakes", {
   latitude: doublePrecision("latitude").notNull(),
   longitude: doublePrecision("longitude").notNull(),
   url: text("url").notNull(),
+});
+export const disasters = pgTable("disasters", {
+  id: text("id").primaryKey(),
+  user_id: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  link: text("link").notNull(),
+  categories: jsonb("categories").notNull(),
+  sources: jsonb("sources").notNull(),
+  geometry: jsonb("geometry").notNull(),
+  closed: boolean("closed").default(false),
+  created_at: timestamp("created_at").defaultNow(),
 });

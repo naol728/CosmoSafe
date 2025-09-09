@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { getDistance } from "../utils/getDistance";
 import redis from "./../utils/redis";
 import { db } from "../db/db";
-import { earthquakes } from "../db/schema";
+import { disasters, earthquakes } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export const getDisasters = async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ export const getDisasters = async (req: Request, res: Response) => {
       pagination: { page, limit, offset, radius, search },
     };
 
-    await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);
+    await redis.set(cacheKey, JSON.stringify(result), "EX", 360000);
 
     res.json(result);
   } catch (err: any) {
@@ -101,7 +101,7 @@ export const getEarthquakes = async (req: Request, res: Response) => {
       maxMagnitude,
     } = req.query;
 
-    const { page, limit, offset } = (req as any).pagination;
+    const { page, limit = 100, offset } = (req as any).pagination;
 
     if (!lat || !lon) {
       return res.status(400).json({ error: "lat and lon are required" });
@@ -109,8 +109,8 @@ export const getEarthquakes = async (req: Request, res: Response) => {
 
     const params: any = {
       format: "geojson",
-      latitude: 38,
-      longitude: 13,
+      latitude: lat,
+      longitude: lon,
       maxradiuskm: radius,
       limit,
       offset: offset > 0 ? offset : 1,
@@ -157,7 +157,7 @@ export const addEarthquake = async (req: Request, res: Response) => {
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(400).json({ message: "Unauthorized" });
     }
 
     const { id, magnitude, place, time, depth, latitude, longitude, url } =
@@ -205,7 +205,7 @@ export const getEarthquakedb = async (req: Request, res: Response) => {
     const userId = req.user?.id;
 
     if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(400).json({ message: "Unauthorized" });
     }
 
     const data = await db
@@ -219,5 +219,76 @@ export const getEarthquakedb = async (req: Request, res: Response) => {
   } catch (error) {
     console.log("Error feching er from db", error);
     res.status(500).json({ error });
+  }
+};
+
+export const addDisaster = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const {
+      id,
+      title,
+      description,
+      link,
+      categories,
+      sources,
+      geometry,
+      closed,
+    } = req.body;
+
+    if (!id || !title || !link || !categories || !sources || !geometry) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const parsedCategories = Array.isArray(categories)
+      ? categories
+      : JSON.parse(categories);
+    const parsedSources = Array.isArray(sources)
+      ? sources
+      : JSON.parse(sources);
+    const parsedGeometry = Array.isArray(geometry)
+      ? geometry
+      : JSON.parse(geometry);
+
+    await db.insert(disasters).values({
+      id,
+      user_id: userId,
+      title,
+      description: description || null,
+      link,
+      categories: parsedCategories,
+      sources: parsedSources,
+      geometry: parsedGeometry,
+      closed: Boolean(closed),
+    });
+
+    return res
+      .status(201)
+      .json({ message: "Disaster event saved successfully" });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+export const getUserDisasters = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const userDisasters = await db
+      .select()
+      .from(disasters)
+      .where(eq(disasters.user_id, userId));
+
+    return res.status(200).json({ disasters: userDisasters });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message });
   }
 };

@@ -65,8 +65,7 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
         limit,
         search,
     })
-    console.log(eqdb)
-    console.group(earthquake)
+
 
 
     return (

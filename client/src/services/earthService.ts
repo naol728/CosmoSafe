@@ -60,3 +60,25 @@ export const getEarthquakedb = async () => {
   const res = await apiClient.get(`${EARTHENDPOINT}/get/earthquake`);
   return res.data;
 };
+
+export const addDisaster = async (disaster: any) => {
+  console.log(disaster);
+
+  const res = await apiClient.post("/earth/add/disaster", {
+    id: disaster.id,
+    title: disaster.title,
+    description: disaster.description || null,
+    link: disaster.link,
+    categories: disaster.categories,
+    sources: disaster.sources,
+    geometry: disaster.geometry,
+    closed: disaster.closed || false,
+  });
+
+  return res.data;
+};
+
+export const getUserDisaster = async () => {
+  const res = await apiClient.get(`${EARTHENDPOINT}/get/disaster`);
+  return res.data;
+};

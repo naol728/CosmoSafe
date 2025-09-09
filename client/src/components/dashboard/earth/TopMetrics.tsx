@@ -62,7 +62,7 @@ export default function TopMetrics({
         },
         {
             title: "🌊 Flood Risk",
-            data: floodData?.[0]?.discharge || "NA",
+            data: floodData?.[0]?.discharge || 0,
             sub: "Today’s forecast",
             icon: Satellite,
             gradient: "from-blue-400/10 to-blue-600/10",
@@ -73,7 +73,7 @@ export default function TopMetrics({
         },
         {
             title: "🌍 Recent Earthquake",
-            data: earthquake?.earthquakes?.length > 0 ? `${earthquake.earthquakes[0].magnitude} M` : "NA",
+            data: earthquake?.earthquakes?.length > 0 ? `${earthquake.earthquakes[0].magnitude} M` : 0,
             sub: earthquake?.earthquakes?.length > 0 ? earthquake.earthquakes[0].place : "No recent earthquakes nearby",
             extra: earthquake?.earthquakes?.length > 0 ? new Date(earthquake.earthquakes[0].time).toLocaleString() : null,
             icon: Rocket,
