@@ -118,7 +118,7 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
                                                         onClick={() => handleaddEarthqueke(eq)}
                                                         disabled={isPending || existsInDb}
                                                     >
-                                                        {existsInDb ? "Saved" : <Save />}
+                                                        {existsInDb ? <><Save /> Saved</> : <><Save /> Save</>}
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>

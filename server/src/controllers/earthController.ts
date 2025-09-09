@@ -1,19 +1,25 @@
 import axios from "axios";
 import { Request, Response } from "express";
 import { getDistance } from "../utils/getDistance";
+import redis from "./../utils/redis";
 import { db } from "../db/db";
 import { earthquakes } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 export const getDisasters = async (req: Request, res: Response) => {
-  const { search = "", lat = 9.03, lon = 38.74, radius = 500 } = req.query;
+  const { search = "", lat = 9.03, lon = 38.74, radius = 1000 } = req.query;
   const { page = 1, limit = 5, offset } = (req as any).pagination;
 
   try {
+    const cacheKey = `disasters:${page}:${limit}:${search}:${lat}:${lon}:${radius}`;
+    const cached = await redis.get(cacheKey);
+
+    if (cached) {
+      return res.json(JSON.parse(cached));
+    }
+
     const eonet = await axios
-      .get(
-        `https://eonet.gsfc.nasa.gov/api/v3/events?limit=${limit}&offset=${offset}`
-      )
+      .get(`https://eonet.gsfc.nasa.gov/api/v3/events?offset=${offset}`)
       .then((r) => r.data.events);
 
     let filteredEvents = eonet.filter((event: any) => {
@@ -31,15 +37,18 @@ export const getDisasters = async (req: Request, res: Response) => {
       );
     }
 
-    res.json({
+    const result = {
       disasters: filteredEvents,
       pagination: { page, limit, offset, radius, search },
-    });
+    };
+
+    await redis.set(cacheKey, JSON.stringify(result), "EX", 3600);
+
+    res.json(result);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 };
-
 export const getWeather = async (req: Request, res: Response) => {
   const { lat = 9.03, lon = 38.74 } = req.query;
 
