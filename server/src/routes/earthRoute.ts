@@ -1,11 +1,13 @@
 import { Router } from "express";
 import {
+  addDisaster,
   addEarthquake,
   getCarbon,
   getDisasters,
   getEarthquakedb,
   getEarthquakes,
   getFlood,
+  getUserDisasters,
   getWeather,
 } from "../controllers/earthController";
 import { paginationMiddleware } from "../utils/pagination";
@@ -21,5 +23,7 @@ router.get("/earthquake", getEarthquakes);
 router.get("/carbon", getCarbon);
 router.get("/get/earthquake", getEarthquakedb);
 router.post("/add/earthquake", addEarthquake);
+router.post("/add/disaster", addDisaster);
+router.get("/get/disaster", getUserDisasters);
 
 export default router;
