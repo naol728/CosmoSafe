@@ -7,6 +7,7 @@ import cors from "cors";
 import morgan from "morgan";
 import authRoutes from "./auth/auth.routes";
 import earthRoutes from "./routes/earthRoute";
+import spaceRoutes from "./routes/spaceRoutes";
 pool
   .connect()
   .then((client) => {
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/earth", earthRoutes);
+app.use("/api/space", spaceRoutes);
 
 const PORT = process.env.PORT ?? 5000;
 
