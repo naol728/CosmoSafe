@@ -1,118 +1,154 @@
 "use client"
 
-import React from "react"
+import { useState, useMemo } from "react"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertTriangle, Globe, Satellite, Rocket } from "lucide-react"
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, BarChart, Bar } from "recharts"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Loader2 } from "lucide-react"
+import { Link } from "react-router-dom"
+import {
+    Breadcrumb,
+    BreadcrumbItem,
 
-const spaceActivity = [
-    { name: "Jan", satellites: 120, debris: 45 },
-    { name: "Feb", satellites: 140, debris: 50 },
-    { name: "Mar", satellites: 160, debris: 48 },
-    { name: "Apr", satellites: 180, debris: 60 },
-    { name: "May", satellites: 200, debris: 62 },
-]
+    BreadcrumbList,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
-const earthStatus = [
-    { name: "Mon", co2: 410, ozone: 300 },
-    { name: "Tue", co2: 420, ozone: 295 },
-    { name: "Wed", co2: 430, ozone: 310 },
-    { name: "Thu", co2: 440, ozone: 305 },
-    { name: "Fri", co2: 450, ozone: 298 },
-]
+
+
+async function fetchArticles({ pageParam = "https://api.spaceflightnewsapi.net/v4/articles/?limit=10&offset=0" }) {
+    const res = await fetch(pageParam)
+    if (!res.ok) throw new Error("Failed to fetch")
+    return res.json()
+}
 
 export default function Dashboard() {
+    const [search, setSearch] = useState("")
+    const [category, setCategory] = useState("all")
+
+
+    const {
+        data,
+        isLoading,
+        isError,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
+        queryKey: ["articles"],
+        queryFn: fetchArticles,
+        getNextPageParam: (lastPage) => lastPage.next || undefined,
+        initialPageParam: "https://api.spaceflightnewsapi.net/v4/articles/?limit=10&offset=0",
+    })
+
+
+    const articles = useMemo(() => {
+        return data?.pages.flatMap((page) => page.results) || []
+    }, [data])
+
+
+    const filteredArticles = useMemo(() => {
+        return articles.filter((a) => {
+            const matchesSearch =
+                a.title.toLowerCase().includes(search.toLowerCase()) ||
+                a.summary.toLowerCase().includes(search.toLowerCase())
+            const matchesCategory = category === "all" || a.news_site === category
+            return matchesSearch && matchesCategory
+        })
+    }, [articles, search, category])
+
+
+    const categories = useMemo(() => {
+        const sites = new Set(articles.map((a) => a.news_site))
+        return ["all", ...Array.from(sites)]
+    }, [articles])
+
     return (
-        <div className="p-6 space-y-6">
-            {/* Header */}
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent">
-                🌍 CosmoSafe Dashboard
-            </h1>
+        <div className="p-6 max-w-6xl mx-auto">
+            <div className="p-6 max-w-6xl mx-auto">
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="bg-gradient-to-br from-pink-500/10 to-red-500/10 border-pink-500/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Active Satellites</CardTitle>
-                        <Satellite className="h-5 w-5 text-pink-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">1,245</div>
-                        <p className="text-xs text-muted-foreground">+12 since last week</p>
-                    </CardContent>
-                </Card>
 
-                <Card className="bg-gradient-to-br from-red-500/10 to-purple-500/10 border-red-500/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Space Debris</CardTitle>
-                        <Rocket className="h-5 w-5 text-red-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">8,934</div>
-                        <p className="text-xs text-muted-foreground">+230 this month</p>
-                    </CardContent>
-                </Card>
+                {/* Page Title */}
+                <h1 className="text-3xl font-bold mb-6">🚀 Space & Earth News</h1>
 
-                <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Earth Alerts</CardTitle>
-                        <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">15</div>
-                        <p className="text-xs text-muted-foreground">3 critical alerts</p>
-                    </CardContent>
-                </Card>
+                {/* Breadcrumb */}
+                <Breadcrumb className="mb-4">
+                    <BreadcrumbList>
+                        <BreadcrumbItem>
+                            <Link to="/dashboard" className="text-blue-500 hover:underline">
+                                Dashboard
+                            </Link>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                    </BreadcrumbList>
+                </Breadcrumb>
 
-                <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500/20">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardTitle className="text-sm font-medium">Global CO₂ Levels</CardTitle>
-                        <Globe className="h-5 w-5 text-blue-400" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">450 ppm</div>
-                        <p className="text-xs text-muted-foreground">+10 ppm this week</p>
-                    </CardContent>
-                </Card>
-            </div>
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <Input
+                        placeholder="Search articles..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="flex-1"
+                    />
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Space Activity Chart */}
-                <Card className="border border-pink-500/20">
-                    <CardHeader>
-                        <CardTitle>🚀 Space Activity</CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={spaceActivity}>
-                                <XAxis dataKey="name" stroke="#8884d8" />
-                                <YAxis />
-                                <Tooltip />
-                                <Line type="monotone" dataKey="satellites" stroke="#ec4899" strokeWidth={2} />
-                                <Line type="monotone" dataKey="debris" stroke="#ef4444" strokeWidth={2} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
+                    <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Filter by site" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {categories.map((c) => (
+                                <SelectItem key={c} value={c}>
+                                    {c}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
 
-                {/* Earth Status Chart */}
-                <Card className="border border-purple-500/20">
-                    <CardHeader>
-                        <CardTitle>🌍 Earth Status</CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={earthStatus}>
-                                <XAxis dataKey="name" stroke="#8884d8" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="co2" fill="#ec4899" />
-                                <Bar dataKey="ozone" fill="#8b5cf6" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
+                {/* Articles */}
+                {isLoading && <p>Loading...</p>}
+                {isError && <p className="text-red-500">Failed to load articles.</p>}
+
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {filteredArticles.map((article) => (
+                        <Card key={article.id} className="overflow-hidden hover:shadow-lg transition">
+                            <img
+                                src={article.image_url}
+                                alt={article.title}
+                                className="w-full h-40 object-cover"
+                            />
+                            <CardHeader>
+                                <CardTitle className="text-lg line-clamp-2">{article.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-muted-foreground line-clamp-3">{article.summary}</p>
+                                <p className="mt-2 text-xs text-gray-400">
+                                    {new Date(article.published_at).toLocaleString()} · {article.news_site}
+                                </p>
+                                <Link
+                                    to={`/dashboard/articles/${article.id}`}
+                                    className="text-blue-500 text-sm font-medium hover:underline"
+                                >
+                                    Read more →
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+
+                <div className="flex justify-center mt-8">
+                    {hasNextPage && (
+                        <Button
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                        >
+                            {isFetchingNextPage && <Loader2 className="animate-spin w-4 h-4 mr-2" />}
+                            Load more
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
     )

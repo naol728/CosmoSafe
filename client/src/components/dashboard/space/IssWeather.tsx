@@ -34,32 +34,32 @@ export default function IssWeather() {
                                     Identifiers
                                 </h3>
                                 <ul className="space-y-1">
-                                    <li><strong>NORAD:</strong> {iss.NORAD_CAT_ID} <span className="text-gray-500"> (catalog ID used for tracking)</span></li>
-                                    <li><strong>ID:</strong> {iss.OBJECT_ID}</li>
-                                    <li><strong>Name:</strong> {iss.OBJECT_NAME}</li>
-                                    <li><strong>Type:</strong> {iss.OBJECT_TYPE} <span className="text-gray-500">(e.g. Payload, Rocket Body)</span></li>
+                                    <li><strong>NORAD:</strong> {iss?.NORAD_CAT_ID} <span className="text-gray-500"> (catalog ID used for tracking)</span></li>
+                                    <li><strong>ID:</strong> {iss?.OBJECT_ID}</li>
+                                    <li><strong>Name:</strong> {iss?.OBJECT_NAME}</li>
+                                    <li><strong>Type:</strong> {iss?.OBJECT_TYPE} <span className="text-gray-500">(e.g. Payload, Rocket Body)</span></li>
                                 </ul>
                             </div>
 
                             <div>
                                 <h3 className="text-blue-300 font-semibold mb-1">Orbit</h3>
                                 <ul className="space-y-1">
-                                    <li><strong>Inclination:</strong> {iss.INCLINATION}° <span className="text-gray-500">(tilt relative to Earth’s equator)</span></li>
-                                    <li><strong>Apogee:</strong> {iss.APOGEE} km <span className="text-gray-500">(farthest point from Earth)</span></li>
-                                    <li><strong>Perigee:</strong> {iss.PERIGEE} km <span className="text-gray-500">(closest point to Earth)</span></li>
-                                    <li><strong>Mean Motion:</strong> {iss.MEAN_MOTION} <span className="text-gray-500">(orbits per day)</span></li>
+                                    <li><strong>Inclination:</strong> {iss?.INCLINATION}° <span className="text-gray-500">(tilt relative to Earth’s equator)</span></li>
+                                    <li><strong>Apogee:</strong> {iss?.APOGEE} km <span className="text-gray-500">(farthest point from Earth)</span></li>
+                                    <li><strong>Perigee:</strong> {iss?.PERIGEE} km <span className="text-gray-500">(closest point to Earth)</span></li>
+                                    <li><strong>Mean Motion:</strong> {iss?.MEAN_MOTION} <span className="text-gray-500">(orbits per day)</span></li>
                                 </ul>
                             </div>
 
                             <div>
                                 <h3 className="text-blue-300 font-semibold mb-1">Telemetry</h3>
                                 <ul className="space-y-1 text-gray-300">
-                                    <li>Status: {iss.DECAYED === "0" ? "🟢 Active in orbit" : "🔴 Decayed / re-entered"}</li>
-                                    <li>Epoch: {new Date(iss.EPOCH).toLocaleString()}</li>
+                                    <li>Status: {iss?.DECAYED === "0" ? "🟢 Active in orbit" : "🔴 Decayed / re-entered"}</li>
+                                    <li>Epoch: {new Date(iss?.EPOCH).toLocaleString()}</li>
                                     <li>
                                         TLE Data:
                                         <pre className="bg-black/40 p-2 rounded text-xs text-yellow-300 overflow-x-auto mt-1">
-                                            {iss.TLE_LINE0}{"\n"}{iss.TLE_LINE1}{"\n"}{iss.TLE_LINE2}
+                                            {iss?.TLE_LINE0}{"\n"}{iss?.TLE_LINE1}{"\n"}{iss?.TLE_LINE2}
                                         </pre>
                                         <span className="text-gray-500 text-xs">Two-line element set describing orbit</span>
                                     </li>

@@ -13,6 +13,8 @@ import Earth from "./page/dashboard/earth/Earth";
 import Space from "./page/dashboard/space/Space";
 import Search from "./page/dashboard/search/Search";
 import Setting from "./page/dashboard/setting/Setting";
+import ArticleDetail from "./components/ArticleDetail";
+import Discovery from "./page/dashboard/discoveries/Discovery";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -30,9 +32,10 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="articles/:id" element={<ArticleDetail />} />
             <Route path="earth" element={<Earth />} />
             <Route path="space" element={<Space />} />
-            <Route path="alert" element={<>Alert</>} />
+            <Route path="discovery" element={<Discovery />} />
             <Route path="insights" element={<>ai insight</>} />
             <Route path="images" element={<>images</>} />
             <Route path="search" element={<Search />} />
