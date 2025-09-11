@@ -2,11 +2,10 @@ import { useLocation, Link } from "react-router-dom"
 import { useState } from "react"
 import {
     Home,
-    Search,
+    DiscIcon,
     Settings,
     Rocket,
     Globe,
-    AlertTriangle,
     Satellite,
     LogOut,
     ChevronsUpDown,
@@ -31,10 +30,9 @@ const items = [
     { title: "Home", url: "/dashboard", icon: Home },
     { title: "Earth Monitoring", url: "/dashboard/earth", icon: Globe },
     { title: "Space Tracking", url: "/dashboard/space", icon: Satellite },
-    { title: "Alerts", url: "/dashboard/alert", icon: AlertTriangle },
+    { title: "Discovery", url: "/dashboard/discovery", icon: DiscIcon },
     { title: "AI Insights", url: "/dashboard/insights", icon: Rocket },
     { title: "Images", url: "/dashboard/images", icon: Image },
-    { title: "Search", url: "/dashboard/search", icon: Search },
     { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ]
 
