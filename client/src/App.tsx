@@ -15,6 +15,7 @@ import Search from "./page/dashboard/search/Search";
 import Setting from "./page/dashboard/setting/Setting";
 import ArticleDetail from "./components/ArticleDetail";
 import Discovery from "./page/dashboard/discoveries/Discovery";
+import ArticleLayout from "./page/dashboard/ArticleLayout";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -31,8 +32,11 @@ function App() {
         <Route path="/varify-otp/:email" element={<VarifyOtp />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="articles/:id" element={<ArticleDetail />} />
+            <Route element={<ArticleLayout />} >
+              <Route index element={<Dashboard />} />
+              <Route path="articles/:id" element={<ArticleDetail />} />
+            </Route>
+
             <Route path="earth" element={<Earth />} />
             <Route path="space" element={<Space />} />
             <Route path="discovery" element={<Discovery />} />

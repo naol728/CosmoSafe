@@ -316,3 +316,40 @@ export const getUserNeo = async (req: Request, res: Response) => {
     return res.status(500).json({ message: err.message });
   }
 };
+export const fetchArticles = async (req: Request, res: Response) => {
+  try {
+    const { page, limit, offset, search } = (req as any).pagination;
+
+    let url = `https://api.spaceflightnewsapi.net/v4/articles/?limit=${limit}&offset=${offset}`;
+
+    if (search) {
+      url += `&title_contains=${encodeURIComponent(search)}`;
+    }
+
+    const response = await axios.get(url);
+
+    res.json({
+      page,
+      limit,
+      total: response.data.count,
+      results: response.data.results,
+      next: response.data.next,
+      prev: response.data.previous,
+    });
+  } catch (err: any) {
+    console.error("Error fetching articles:", err.message);
+    res.status(500).json({ error: "Failed to fetch articles" });
+  }
+};
+export const getArticleById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const apiUrl = `https://api.spaceflightnewsapi.net/v4/articles/${id}/`;
+
+    const { data } = await axios.get(apiUrl);
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch article" });
+  }
+};

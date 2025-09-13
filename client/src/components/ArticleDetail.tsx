@@ -5,103 +5,105 @@ import { useParams, Link } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, ArrowLeft } from "lucide-react"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-
-
-async function fetchArticle(id: string) {
-    const res = await fetch(`https://api.spaceflightnewsapi.net/v4/articles/${id}/`)
-    if (!res.ok) throw new Error("Failed to fetch article")
-    return res.json()
-}
+import { fetchArticleById } from "@/services/spaceService"
 
 export default function ArticleDetail() {
     const { id } = useParams<{ id: string }>()
 
     const { data: article, isLoading, isError } = useQuery({
         queryKey: ["article", id],
-        queryFn: () => fetchArticle(id!),
+        queryFn: () => fetchArticleById(id!),
         enabled: !!id,
     })
 
     if (isLoading) {
-        return <p className="flex items-center gap-2 text-gray-400"><Loader2 className="animate-spin w-4 h-4" /> Loading...</p>
+        return (
+            <div className="flex justify-center py-20">
+                <Loader2 className="animate-spin w-6 h-6 text-gray-400" />
+            </div>
+        )
     }
+
     if (isError) {
-        return <p className="text-red-500">❌ Failed to load article.</p>
+        return (
+            <p className="text-red-500 text-center py-20">❌ Failed to load article.</p>
+        )
     }
 
     return (
-        <div className="p-6 max-w-4xl mx-auto">
-            {/* Breadcrumb */}
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <Link to="/dashboard">Dashboard</Link>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>{article.title.slice(0, 30)}...</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
+        <div className="p-6 max-w-4xl mx-auto space-y-6">
 
             {/* Back button */}
-            <Link to="/dashboard" className="inline-flex items-center text-blue-400 hover:underline mb-4">
+            <Link
+                to="/dashboard"
+                className="inline-flex items-center text-blue-500 hover:underline font-medium mb-2"
+            >
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to articles
             </Link>
 
-            {/* Article card */}
-            <Card className="overflow-hidden">
-                <img src={article.image_url} alt={article.title} className="w-full h-72 object-cover" />
-                <CardHeader>
-                    <CardTitle className="text-2xl">{article.title}</CardTitle>
+            {/* Header image */}
+            <div className="relative rounded-xl overflow-hidden shadow-lg">
+                <img
+                    src={article.image_url}
+                    alt={article.title}
+                    className="w-full h-80 object-cover"
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-end p-4">
+                    <span className="text-white text-sm bg-blue-500/80 px-2 py-1 rounded">{article.news_site}</span>
+                </div>
+            </div>
+
+            {/* Article title & metadata */}
+            <Card className="shadow-md">
+                <CardHeader className="space-y-2">
+                    <CardTitle className="text-3xl font-bold">{article.title}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                        {new Date(article.published_at).toLocaleString()} · {article.news_site}
+                        {new Date(article.published_at).toLocaleString()}
                     </p>
                 </CardHeader>
-                <CardContent>
-                    <p className="text-lg mb-4">{article.summary}</p>
+                <CardContent className="space-y-6">
 
+                    {/* Summary */}
+                    <p className="text-lg">{article.summary}</p>
+
+                    {/* Authors */}
                     {article.authors?.length > 0 && (
-                        <div className="mt-4">
-                            <h3 className="font-semibold mb-2">Authors</h3>
-                            <ul className="space-y-1">
+                        <div>
+                            <h3 className="font-semibold mb-2 text-lg">Authors</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 {article.authors.map((author: any, i: number) => (
-                                    <li key={i} className="text-sm">
+                                    <div key={i} className="p-2 border rounded shadow-sm hover:shadow-md transition">
                                         👤 {author.name}
-                                    </li>
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     )}
 
+                    {/* Launches */}
                     {article.launches?.length > 0 && (
-                        <div className="mt-4">
-                            <h3 className="font-semibold mb-2">Launches</h3>
-                            <ul className="space-y-1">
+                        <div>
+                            <h3 className="font-semibold mb-2 text-lg">Launches</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 {article.launches.map((l: any, i: number) => (
-                                    <li key={i} className="text-sm">🚀 {l.provider} ({l.launch_id})</li>
+                                    <div key={i} className="p-2 border rounded shadow-sm hover:shadow-md transition">
+                                        🚀 {l.provider} ({l.launch_id})
+                                    </div>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     )}
 
+                    {/* Full article link */}
                     <a
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-6 inline-block text-blue-500 hover:underline"
+                        className="inline-block text-blue-500 hover:underline font-medium"
                     >
                         Read full article →
                     </a>
+
                 </CardContent>
             </Card>
         </div>

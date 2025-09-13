@@ -112,3 +112,21 @@ export async function getUserNeoObject() {
   const res = await apiClient.get(`${BASE}/get/neo-alert`);
   return res.data?.userneo;
 }
+
+export async function fetchArticles({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) {
+  const res = await apiClient.get(`${BASE}/get/articles`, {
+    params: { page, limit },
+  });
+  return res.data;
+}
+
+export async function fetchArticleById(id: string) {
+  const res = await apiClient.get(`${BASE}/get/articles/${id}`);
+  return res.data;
+}

@@ -10,8 +10,11 @@ import {
   getUserCollisons,
   createNeoAlert,
   getUserNeo,
+  fetchArticles,
+  getArticleById,
 } from "../controllers/spaceController";
 import { protectedRoute } from "../auth/auth.controller";
+import { paginationMiddleware } from "../utils/pagination";
 
 const router = Router();
 router.use(protectedRoute);
@@ -25,5 +28,7 @@ router.post("/create/collision-alert", createCollisionAlert);
 router.post("/create/neo-alert", createNeoAlert);
 router.get("/get/collision-alert", getUserCollisons);
 router.get("/get/neo-alert", getUserNeo);
+router.get("/get/articles", paginationMiddleware, fetchArticles);
+router.get("/get/articles/:id", getArticleById);
 
 export default router;

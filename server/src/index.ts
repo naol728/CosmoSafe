@@ -8,6 +8,8 @@ import morgan from "morgan";
 import authRoutes from "./auth/auth.routes";
 import earthRoutes from "./routes/earthRoute";
 import spaceRoutes from "./routes/spaceRoutes";
+import spaceDataRoute from "./routes/spaceDataRoute";
+import aiRoutes from "./routes/aiRoutes";
 pool
   .connect()
   .then((client) => {
@@ -23,8 +25,10 @@ app.use(morgan(":method :url :status :response-time ms"));
 app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
+app.use("/api/ai", aiRoutes);
 app.use("/api/earth", earthRoutes);
 app.use("/api/space", spaceRoutes);
+app.use("/api/space-data", spaceDataRoute);
 
 const PORT = process.env.PORT ?? 5000;
 
