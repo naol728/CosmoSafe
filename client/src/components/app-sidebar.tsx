@@ -32,7 +32,7 @@ const items = [
     { title: "Space Tracking", url: "/dashboard/space", icon: Satellite },
     { title: "Discovery", url: "/dashboard/discovery", icon: DiscIcon },
     { title: "AI Insights", url: "/dashboard/insights", icon: Rocket },
-    { title: "Images", url: "/dashboard/images", icon: Image },
+    { title: "Space Images", url: "/dashboard/images", icon: Image },
     { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ]
 

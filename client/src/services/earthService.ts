@@ -82,3 +82,19 @@ export const getUserDisaster = async () => {
   const res = await apiClient.get(`${EARTHENDPOINT}/get/disaster`);
   return res.data;
 };
+export const deleteUserDisaster = async (id: string) => {
+  const res = await apiClient.delete(`${EARTHENDPOINT}/delete/disaster/${id}`);
+  return res;
+};
+export const deleteUserEarthQuake = async (id: string) => {
+  try {
+    console.log(id);
+    const res = await apiClient.delete(
+      `${EARTHENDPOINT}/delete/earthquake/${id}`
+    );
+    console.log(res);
+    return res;
+  } catch (err: any) {
+    throw new Error(err.message || "disaster is not deleted");
+  }
+};

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import AiSupport from "./AiSupport"
+import AiButton from "@/components/AIButton"
 
 export default function StudyMetadata({ studyId }: { studyId: string }) {
     const { data, isLoading, isError } = useQuery({
@@ -165,13 +166,12 @@ export default function StudyMetadata({ studyId }: { studyId: string }) {
                     {/* AI Support Button */}
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button
-                                size="lg"
+                            <AiButton
                                 className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold shadow-md hover:from-indigo-700 hover:to-violet-700 transition-all duration-300 rounded-xl flex items-center justify-center gap-2"
                             >
                                 <Bot className="w-5 h-5" />
                                 Get AI Insights
-                            </Button>
+                            </AiButton>
                         </SheetTrigger>
                         <SheetContent side="right" className="w-full sm:max-w-lg">
                             <AiSupport metadata={metadataForAI} />

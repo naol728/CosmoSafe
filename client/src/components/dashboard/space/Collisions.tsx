@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCollisionAlert, fetchCollisionAlerts, getUserCollision } from '@/services/spaceService';
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import useUserCollision from "@/hooks/spacehooks/useUserCollision";
 
 type CollisionAlert = { [key: string]: any };
 
@@ -15,11 +16,9 @@ export default function Collisions() {
     queryKey: ["collisionAlerts"],
     queryFn: fetchCollisionAlerts,
   });
+  const { usercollisonsRaw, usercollisionsLoading } = useUserCollision()
 
-  const { data: usercollisonsRaw, isLoading: usercollisionsLoading } = useQuery({
-    queryKey: ["userCollisionAlerts"],
-    queryFn: getUserCollision,
-  });
+
 
   const usercollisons = usercollisonsRaw?.collision || [];
 

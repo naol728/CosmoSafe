@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import redis from "./../utils/redis";
 import { collisionAlerts, neoAlerts } from "../db/schema";
 import { db } from "../db/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const SPACE_TRACK_USER = process.env.SPACE_TRACK_USER!;
 const SPACE_TRACK_PASS = process.env.SPACE_TRACK_PASS!;
@@ -255,6 +255,26 @@ export const getUserCollisons = async (req: Request, res: Response) => {
     return res.status(500).json({ message: err.message });
   }
 };
+export const deleteUserCollison = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) {
+      return res.status(400).json({ message: "Unauthorized" });
+    }
+
+    const userCollison = await db
+      .delete(collisionAlerts)
+      .where(
+        and(eq(collisionAlerts.userId, userId), eq(collisionAlerts.cdmId, id))
+      );
+
+    return res.status(200).json({ collision: userCollison });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
 
 export const createNeoAlert = async (req: Request, res: Response) => {
   try {
@@ -316,6 +336,28 @@ export const getUserNeo = async (req: Request, res: Response) => {
     return res.status(500).json({ message: err.message });
   }
 };
+export const deleteUserNeo = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) {
+      return res.status(400).json({ message: "Unauthorized" });
+    }
+    if (!id) {
+      return res.status(400).json({ message: "neo ID is required" });
+    }
+
+    const userneo = await db
+      .delete(neoAlerts)
+      .where(and(eq(neoAlerts.userId, userId), eq(neoAlerts.id, id)));
+
+    return res.status(200).json({ userneo: userneo });
+  } catch (err: any) {
+    console.error(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 export const fetchArticles = async (req: Request, res: Response) => {
   try {
     const { page, limit, offset, search } = (req as any).pagination;

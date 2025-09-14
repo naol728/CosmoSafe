@@ -16,6 +16,8 @@ import Setting from "./page/dashboard/setting/Setting";
 import ArticleDetail from "./components/ArticleDetail";
 import Discovery from "./page/dashboard/discoveries/Discovery";
 import ArticleLayout from "./page/dashboard/ArticleLayout";
+import AiInsight from "./page/ai/AiInsight";
+import Imgaes from "./page/image/Images";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -40,8 +42,8 @@ function App() {
             <Route path="earth" element={<Earth />} />
             <Route path="space" element={<Space />} />
             <Route path="discovery" element={<Discovery />} />
-            <Route path="insights" element={<>ai insight</>} />
-            <Route path="images" element={<>images</>} />
+            <Route path="insights" element={<AiInsight />} />
+            <Route path="images" element={<Imgaes />} />
             <Route path="search" element={<Search />} />
             <Route path="Settings" element={<Setting />} />
           </Route>

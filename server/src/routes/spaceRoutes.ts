@@ -12,6 +12,8 @@ import {
   getUserNeo,
   fetchArticles,
   getArticleById,
+  deleteUserCollison,
+  deleteUserNeo,
 } from "../controllers/spaceController";
 import { protectedRoute } from "../auth/auth.controller";
 import { paginationMiddleware } from "../utils/pagination";
@@ -27,7 +29,9 @@ router.get("/nearby", getNearbyObjects);
 router.post("/create/collision-alert", createCollisionAlert);
 router.post("/create/neo-alert", createNeoAlert);
 router.get("/get/collision-alert", getUserCollisons);
+router.delete("/delete/collision-alert/:id", deleteUserCollison);
 router.get("/get/neo-alert", getUserNeo);
+router.delete("/get/neo-alert/:id", deleteUserNeo);
 router.get("/get/articles", paginationMiddleware, fetchArticles);
 router.get("/get/articles/:id", getArticleById);
 
