@@ -4,7 +4,7 @@ import { getDistance } from "../utils/getDistance";
 import redis from "./../utils/redis";
 import { db } from "../db/db";
 import { disasters, earthquakes } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const getDisasters = async (req: Request, res: Response) => {
   const { search = "", lat = 9.03, lon = 38.74, radius = 1000 } = req.query;
@@ -221,6 +221,29 @@ export const getEarthquakedb = async (req: Request, res: Response) => {
     res.status(500).json({ error });
   }
 };
+export const deleteUserEarthQuak = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    if (!userId) {
+      return res.status(400).json({ message: "Unauthorized" });
+    }
+    if (!id) {
+      return res.status(400).json({ message: "earthquake ID is required" });
+    }
+
+    const data = await db
+      .delete(earthquakes)
+      .where(and(eq(earthquakes.user_id, userId), eq(earthquakes.id, id)));
+
+    return res.json({
+      data,
+    });
+  } catch (error) {
+    console.log("Error feching er from db", error);
+    res.status(500).json({ error });
+  }
+};
 
 export const addDisaster = async (req: Request, res: Response) => {
   try {
@@ -289,6 +312,39 @@ export const getUserDisasters = async (req: Request, res: Response) => {
     return res.status(200).json({ disasters: userDisasters });
   } catch (err: any) {
     console.error(err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteUserdisaster = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (!id) {
+      return res.status(400).json({ message: "Disaster ID is required" });
+    }
+
+    const deleted = await db
+      .delete(disasters)
+      .where(and(eq(disasters.id, id), eq(disasters.user_id, userId)))
+      .returning();
+
+    if (deleted.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Disaster not found or not owned by user" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Disaster deleted successfully", deleted });
+  } catch (err: any) {
+    console.error("Delete disaster error:", err);
     return res.status(500).json({ message: err.message });
   }
 };

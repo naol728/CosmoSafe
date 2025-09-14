@@ -130,3 +130,12 @@ export async function fetchArticleById(id: string) {
   const res = await apiClient.get(`${BASE}/get/articles/${id}`);
   return res.data;
 }
+export async function deleteUserCollision(id: string) {
+  const res = await apiClient.delete(`${BASE}/delete/collision-alert/${id}`);
+  return res;
+}
+
+export async function deleteUserNeo(id: string) {
+  const res = await apiClient.delete(`${BASE}/get/neo-alert/${id}`);
+  return res;
+}

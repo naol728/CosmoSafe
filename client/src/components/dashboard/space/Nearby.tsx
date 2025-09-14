@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Globe, Save, Zap, Calendar, Gauge, ArrowRight, Shield } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import useUserNeoObject from '@/hooks/spacehooks/useUserNeoObject';
 
 type NearbyObject = {
     id: string;
@@ -25,11 +26,9 @@ export default function Nearby() {
         queryKey: ["nearbyObjects"],
         queryFn: fetchNearByObjects,
     });
+    const { userNeoObjects, userNeoLoading } = useUserNeoObject()
 
-    const { data: userNeoObjects, isLoading: userNeoLoading } = useQuery({
-        queryKey: ["userNeoObjects"],
-        queryFn: getUserNeoObject,
-    });
+
 
     const { mutate, isPending } = useMutation({
         mutationFn: createNeoAlert,
@@ -71,8 +70,8 @@ export default function Nearby() {
                                 <div
                                     key={obj.id}
                                     className={`p-4 rounded-xl border transition transform hover:scale-[1.02] hover:shadow-lg ${obj.is_potentially_hazardous
-                                            ? "bg-red-900/20 border-red-400/30"
-                                            : "bg-green-900/20 border-green-400/30"
+                                        ? "bg-red-900/20 border-red-400/30"
+                                        : "bg-green-900/20 border-green-400/30"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between">

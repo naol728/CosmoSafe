@@ -2,6 +2,8 @@ import { Router } from "express";
 import {
   addDisaster,
   addEarthquake,
+  deleteUserdisaster,
+  deleteUserEarthQuak,
   getCarbon,
   getDisasters,
   getEarthquakedb,
@@ -23,7 +25,9 @@ router.get("/earthquake", getEarthquakes);
 router.get("/carbon", getCarbon);
 router.get("/get/earthquake", getEarthquakedb);
 router.post("/add/earthquake", addEarthquake);
+router.delete("/delete/earthquake/:id", deleteUserEarthQuak);
 router.post("/add/disaster", addDisaster);
 router.get("/get/disaster", getUserDisasters);
+router.delete("/delete/disaster/:id", deleteUserdisaster);
 
 export default router;
