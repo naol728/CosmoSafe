@@ -1,6 +1,6 @@
 import { fetchSpaceWeatherForecast } from '@/services/spaceService';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Activity } from "lucide-react";
+import { Activity, Loader2 } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -30,7 +30,10 @@ export default function WeatherForcast() {
       </CardHeader>
       <CardContent>
         {forecastLoading ? (
-          <p className="text-gray-400 text-sm">Loading forecast...</p>
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading ...</span>
+          </div>
         ) : (
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">

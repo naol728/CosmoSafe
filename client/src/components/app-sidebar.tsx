@@ -10,6 +10,8 @@ import {
     LogOut,
     ChevronsUpDown,
     Image,
+    User,
+    DessertIcon,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -35,6 +37,12 @@ const items = [
     { title: "Space Images", url: "/dashboard/images", icon: Image },
     { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ]
+const adminitems = [
+    { title: "Home", url: "/admin", icon: Home },
+    { title: "Users", url: "/admin/users", icon: User },
+    { title: "DataSource", url: "/admin/source", icon: DessertIcon },
+    { title: "Settings", url: "/admin/settings", icon: Settings }
+]
 
 export function AppSidebar() {
     const user = useAppSelector((state) => state.auth.user)
@@ -56,30 +64,56 @@ export function AppSidebar() {
 
                     <SidebarGroupContent>
                         <SidebarMenu className="mt-6 space-y-2">
-                            {items.map((item) => {
-                                const isActive = location.pathname === item.url
-                                return (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton asChild>
-                                            <Link
-                                                to={item.url}
-                                                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
-                                                    ? "bg-pink-500/20 text-pink-300"
-                                                    : "hover:bg-gradient-to-r hover:from-pink-500/20 hover:to-red-500/20 hover:text-pink-300"
-                                                    }`}
-                                            >
-                                                <item.icon
-                                                    className={`h-6 w-6 transition ${isActive
-                                                        ? "text-pink-300"
-                                                        : "text-pink-400 group-hover:text-pink-300"
+
+                            {
+                                user?.user?.is_admin ? adminitems.map((item) => {
+                                    const isActive = location.pathname === item.url
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton asChild>
+                                                <Link
+                                                    to={item.url}
+                                                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
+                                                        ? "bg-pink-500/20 text-pink-300"
+                                                        : "hover:bg-gradient-to-r hover:from-pink-500/20 hover:to-red-500/20 hover:text-pink-300"
                                                         }`}
-                                                />
-                                                <span className="font-medium text-base">{item.title}</span>
-                                            </Link>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                )
-                            })}
+                                                >
+                                                    <item.icon
+                                                        className={`h-6 w-6 transition ${isActive
+                                                            ? "text-pink-300"
+                                                            : "text-pink-400 group-hover:text-pink-300"
+                                                            }`}
+                                                    />
+                                                    <span className="font-medium text-base">{item.title}</span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    )
+                                }) :
+                                    items.map((item) => {
+                                        const isActive = location.pathname === item.url
+                                        return (
+                                            <SidebarMenuItem key={item.title}>
+                                                <SidebarMenuButton asChild>
+                                                    <Link
+                                                        to={item.url}
+                                                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
+                                                            ? "bg-pink-500/20 text-pink-300"
+                                                            : "hover:bg-gradient-to-r hover:from-pink-500/20 hover:to-red-500/20 hover:text-pink-300"
+                                                            }`}
+                                                    >
+                                                        <item.icon
+                                                            className={`h-6 w-6 transition ${isActive
+                                                                ? "text-pink-300"
+                                                                : "text-pink-400 group-hover:text-pink-300"
+                                                                }`}
+                                                        />
+                                                        <span className="font-medium text-base">{item.title}</span>
+                                                    </Link>
+                                                </SidebarMenuButton>
+                                            </SidebarMenuItem>
+                                        )
+                                    })}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
@@ -98,9 +132,9 @@ export function AppSidebar() {
                             <div>
                                 <p className="text-sm font-semibold text-foreground">{user?.user?.email}</p>
                                 <p className="text-xs text-muted-foreground">
-                                    {user?.user?.[0]?.is_premium
+                                    {user?.user?.is_premium
                                         ? "Premium"
-                                        : user?.user?.[0]?.is_admin
+                                        : user?.user?.is_admin
                                             ? "Admin"
                                             : "Regular"}
                                 </p>

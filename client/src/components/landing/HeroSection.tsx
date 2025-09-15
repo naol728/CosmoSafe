@@ -52,7 +52,8 @@ export default function HeroSection() {
                     <Button
                         size="lg"
                         className="rounded-full px-8 py-4 text-lg bg-primary text-black hover:bg-primary/90"
-                    > <Link to={loading ? "/" : user ? "/dashboard" : "/auth"}>
+                    > <Link to={loading ? "/" : user ? user?.user?.is_admin ? "/admin" : "/dashboard" : "/auth"}
+                    >
                             {loading ? "Loading" : user ? "Dashboard" : "Get Started"}
                         </Link>
 

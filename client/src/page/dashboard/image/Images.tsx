@@ -47,9 +47,9 @@ export default function Images() {
         getNextPageParam: () => 10, // always fetch 10 more
     });
 
-    if (status === "pending") return <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
-        Loading....
+    if (status === "pending") return <div className="flex justify-center items-center py-10">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        <span className="ml-2 text-muted-foreground">Loading ...</span>
     </div>
     if (status === "error")
         return <p className="text-center text-red-500">Error loading images</p>;

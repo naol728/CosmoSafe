@@ -16,8 +16,14 @@ import Setting from "./page/dashboard/setting/Setting";
 import ArticleDetail from "./components/ArticleDetail";
 import Discovery from "./page/dashboard/discoveries/Discovery";
 import ArticleLayout from "./page/dashboard/ArticleLayout";
-import AiInsight from "./page/ai/AiInsight";
-import Imgaes from "./page/image/Images";
+import AiInsight from "./page/dashboard/ai/AiInsight";
+import Imgaes from "./page/dashboard/image/Images";
+import Success from "./page/Success";
+import Cancel from "./page/Cancel";
+import DataSource from "./page/admin/DataSource";
+import Users from "./page/admin/Users";
+import Analytics from "./page/admin/Analytics";
+import AdminLayout from "./page/dashboard/AdminLayout";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -32,6 +38,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/varify-otp/:email" element={<VarifyOtp />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Layout />}>
             <Route element={<ArticleLayout />} >
@@ -45,9 +53,21 @@ function App() {
             <Route path="insights" element={<AiInsight />} />
             <Route path="images" element={<Imgaes />} />
             <Route path="search" element={<Search />} />
-            <Route path="Settings" element={<Setting />} />
+            <Route path="settings" element={<Setting />} />
+          </Route>
+
+        </Route>
+
+        {/* Admin-only routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Analytics />} />
+            <Route path="users" element={<Users />} />
+            <Route path="source" element={<DataSource />} />
+            <Route path="settings" element={<Setting />} />
           </Route>
         </Route>
+
       </Routes>
       <Toaster position="top-center" />
     </BrowserRouter>

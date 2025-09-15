@@ -16,7 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteUserCollision } from "@/services/spaceService";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 export default function UserCollision() {
     const { usercollisonsRaw, usercollisionsLoading } = useUserCollision();
@@ -37,10 +37,9 @@ export default function UserCollision() {
 
     if (usercollisionsLoading)
         return (
-            <div className="p-6 flex justify-center items-center">
-                <p className="text-muted-foreground animate-pulse">
-                    🚀 Loading satellite collision events...
-                </p>
+            <div className="flex justify-center items-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Loading ...</span>
             </div>
         );
 

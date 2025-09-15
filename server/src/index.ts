@@ -10,6 +10,9 @@ import earthRoutes from "./routes/earthRoute";
 import spaceRoutes from "./routes/spaceRoutes";
 import spaceDataRoute from "./routes/spaceDataRoute";
 import aiRoutes from "./routes/aiRoutes";
+import paymentRoutes from "./routes/paymentRoutes";
+import { logApiRequest } from "./middleware/logApiRequests";
+import { protectedRoute } from "./auth/auth.controller";
 pool
   .connect()
   .then((client) => {
@@ -21,14 +24,24 @@ pool
   });
 
 const app = express();
-app.use(morgan(":method :url :status :response-time ms"));
+app.use(protectedRoute);
+app.use(logApiRequest);
+app.use(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" }),
+  paymentRoutes
+);
+
 app.use(express.json());
 app.use(cors());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/earth", earthRoutes);
 app.use("/api/space", spaceRoutes);
 app.use("/api/space-data", spaceDataRoute);
+
+app.use("/api/payment", paymentRoutes);
 
 const PORT = process.env.PORT ?? 5000;
 

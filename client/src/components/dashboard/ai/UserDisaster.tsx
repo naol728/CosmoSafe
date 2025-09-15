@@ -16,7 +16,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteUserDisaster } from "@/services/earthService";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 export default function UserDisaster() {
     const { userdisaster, udloading, uderror } = useUserDisaster();
@@ -37,7 +37,10 @@ export default function UserDisaster() {
     const disasters = userdisaster?.disasters || [];
 
     if (udloading)
-        return <p className="text-muted-foreground">Loading disasters...</p>;
+        return <div className="flex justify-center items-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading ...</span>
+        </div>
     if (uderror)
         return <p className="text-red-500">❌ Failed to load disasters.</p>;
 

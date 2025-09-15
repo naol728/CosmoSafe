@@ -99,7 +99,7 @@ export default function Dashboard() {
             {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Array.from({ length: 6 }).map((_, i) => (
-                        <Card key={i} className="animate-pulse h-64 bg-gray-200" />
+                        <Card key={i} className="animate-pulse h-64 bg-pink-400" />
                     ))}
                 </div>
             ) : isError ? (

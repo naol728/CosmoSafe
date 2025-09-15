@@ -1,7 +1,7 @@
 import { fetchISSPosition, fetchSpaceWeatherNow } from '@/services/spaceService';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Satellite, Cloud } from "lucide-react";
+import { Satellite, Cloud, Loader2 } from "lucide-react";
 
 export default function IssWeather() {
     const { data: issData, isLoading: issLoading } = useQuery({
@@ -26,7 +26,10 @@ export default function IssWeather() {
                 </CardHeader>
                 <CardContent className="max-h-[380px] overflow-y-auto custom-scrollbar">
                     {issLoading ? (
-                        <p className="text-gray-400">Loading ISS data...</p>
+                        <div className="flex justify-center items-center py-10">
+                            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                            <span className="ml-2 text-muted-foreground">Loading ...</span>
+                        </div>
                     ) : (
                         <div className="space-y-4 text-sm">
                             <div>

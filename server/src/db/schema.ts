@@ -89,3 +89,9 @@ export const neoAlerts = pgTable("neo_alerts", {
   orbitingBody: text("orbiting_body").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
+export const apiRequests = pgTable("api_requests", {
+  id: serial("id").primaryKey(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  endpoint: text("endpoint").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
