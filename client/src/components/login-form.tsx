@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { requestOtp } from "@/services/authService"
-import { Navigate, useNavigate } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { useMutation } from "@tanstack/react-query"
 import { useAppSelector } from "@/store/hook"
@@ -57,15 +57,15 @@ export function LoginForm({
     >
       <form className="flex flex-col gap-6" onSubmit={handleLogin}>
         <div className="flex flex-col items-center gap-2 text-center">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="flex flex-col items-center gap-2 font-medium"
           >
             <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10">
               <GalleryVerticalEnd className="size-7 text-primary" />
             </div>
             <span className="sr-only">CosmoSafe</span>
-          </a>
+          </Link>
           <h1 className="text-2xl font-bold tracking-tight">
             Login to CosmoSafe
           </h1>

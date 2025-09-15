@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDisaster } from "@/hooks/earthhooks/useDisaster";
 import useUserDisaster from "@/hooks/earthhooks/useUserDisaster";
 import { addDisaster } from "@/services/earthService";
@@ -10,11 +11,32 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 
-export default function DisasterList({ location, page, limit, search, setPage }: { location: { lat: number; lon: number } | null, page: number, search: string, limit: number, setPage: any }) {
-    const { disaster: disasters, loadingdiaster: disastersLoading, disastererr: disastersError } = useDisaster({ location, page, limit, search });
+export default function DisasterList({
+    location,
+    page,
+    limit,
+    search,
+    setPage,
+}: {
+    location: { lat: number; lon: number } | null;
+    page: number;
+    search: string;
+    limit: number;
+    setPage: (p: number) => void;
+}) {
+    const {
+        disaster: disasters,
+        loadingdiaster: disastersLoading,
+        disastererr: disastersError,
+    } = useDisaster({
+        location,
+        page,
+        limit,
+        search,
+    });
+
     const queryClient = useQueryClient();
-    const { userdisaster } = useUserDisaster()
-    console.log(userdisaster)
+    const { userdisaster } = useUserDisaster();
 
     const { mutate, isPending } = useMutation({
         mutationFn: addDisaster,
@@ -26,12 +48,18 @@ export default function DisasterList({ location, page, limit, search, setPage }:
         onError: (error: any) => {
             console.error(error);
             toast.error(error.message);
-        }
+        },
     });
 
     const handleAddDisaster = (disaster: any) => {
         mutate(disaster);
     };
+
+    const perPage = 5;
+    const totalPages = Math.ceil((disasters?.length || 0) / perPage);
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    const paginatedDisasters = disasters?.slice((page - 1) * perPage, page * perPage);
 
     return (
         <>
@@ -58,38 +86,75 @@ export default function DisasterList({ location, page, limit, search, setPage }:
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {disasters?.length > 0 ? (
-                                    disasters.map((d: any) => {
+                                {paginatedDisasters?.length > 0 ? (
+                                    paginatedDisasters.map((d: any) => {
                                         const categoryId = d.categories?.[0]?.id;
                                         const categoryTitle = d.categories?.[0]?.title;
                                         const firstGeometry = d.geometry?.[0];
                                         const coords = firstGeometry?.coordinates || [];
-                                        const date = firstGeometry?.date ? new Date(firstGeometry.date).toLocaleString() : "N/A";
+                                        const date = firstGeometry?.date
+                                            ? new Date(firstGeometry.date).toLocaleString()
+                                            : "N/A";
 
-
-                                        const isSaved = userdisaster?.disasters?.some((ud: any) => ud.id === d.id);
+                                        const isSaved = userdisaster?.disasters?.some(
+                                            (ud: any) => ud.id === d.id
+                                        );
 
                                         return (
                                             <TableRow key={d.id} className="hover:bg-muted/50 transition-colors">
                                                 <TableCell>
-                                                    <a href={d.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{d.title}</a>
+                                                    <a
+                                                        href={d.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 hover:underline"
+                                                    >
+                                                        {d.title}
+                                                    </a>
                                                 </TableCell>
                                                 <TableCell>{categoryTitle || "N/A"}</TableCell>
                                                 <TableCell>{date}</TableCell>
-                                                <TableCell>{coords.length === 2 ? `${coords[1].toFixed(4)}, ${coords[0].toFixed(4)}` : "N/A"}</TableCell>
+                                                <TableCell>
+                                                    {coords.length === 2
+                                                        ? `${coords[1].toFixed(4)}, ${coords[0].toFixed(4)}`
+                                                        : "N/A"}
+                                                </TableCell>
                                                 <TableCell>
                                                     {d.sources?.map((s: any, idx: number) => (
                                                         <div key={idx}>
-                                                            <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{s.id}</a>
+                                                            <a
+                                                                href={s.url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:underline"
+                                                            >
+                                                                {s.id}
+                                                            </a>
                                                         </div>
                                                     )) || "N/A"}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {categoryId === "wildfires" ? "N/A" : firstGeometry?.magnitudeValue ? `${firstGeometry.magnitudeValue} ${firstGeometry.magnitudeUnit || ""}` : "N/A"}
+                                                    {categoryId === "wildfires"
+                                                        ? "N/A"
+                                                        : firstGeometry?.magnitudeValue
+                                                            ? `${firstGeometry.magnitudeValue} ${firstGeometry.magnitudeUnit || ""
+                                                            }`
+                                                            : "N/A"}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Button onClick={() => handleAddDisaster(d)} disabled={isPending || isSaved}>
-                                                        {isSaved ? <><Save /> Saved</> : <><Save /> Save </>}
+                                                    <Button
+                                                        onClick={() => handleAddDisaster(d)}
+                                                        disabled={isPending || isSaved}
+                                                    >
+                                                        {isSaved ? (
+                                                            <>
+                                                                <Save /> Saved
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Save /> Save
+                                                            </>
+                                                        )}
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>
@@ -97,18 +162,28 @@ export default function DisasterList({ location, page, limit, search, setPage }:
                                     })
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center">No events found</TableCell>
+                                        <TableCell colSpan={7} className="text-center">
+                                            No events found
+                                        </TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
-
                         </Table>
 
-                        <div className="flex justify-between mt-6">
-                            <Button disabled={page === 1} onClick={() => setPage((p: any) => Math.max(1, p - 1))} variant="outline">Previous</Button>
-                            <p className="text-sm text-muted-foreground">Page {page}</p>
-                            <Button onClick={() => setPage((p: any) => p + 1)}>Next</Button>
-                        </div>
+                        {/* Tabs for pagination */}
+                        {totalPages > 1 && (
+                            <div className="flex justify-center mt-6">
+                                <Tabs value={String(page)} onValueChange={(val) => setPage(Number(val))}>
+                                    <TabsList>
+                                        {pages.map((p) => (
+                                            <TabsTrigger key={p} value={String(p)}>
+                                                {p}
+                                            </TabsTrigger>
+                                        ))}
+                                    </TabsList>
+                                </Tabs>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             )}

@@ -4,6 +4,7 @@ import {
     CardContent,
     CardHeader,
     CardTitle,
+    CardFooter,
 } from "@/components/ui/card";
 import {
     Table,
@@ -21,32 +22,39 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import useEarthquakedb from "@/hooks/earthhooks/useEarthquakedb";
+import { useState } from "react";
 
-
-export default function EarthquakeList({ location, page, limit, search }: { location: { lat: number; lon: number } | null, page: number, search: string, limit: number }) {
+export default function EarthquakeList({
+    location,
+    page: initialPage,
+    limit,
+    search,
+}: {
+    location: { lat: number; lon: number } | null;
+    page: number;
+    search: string;
+    limit: number;
+}) {
     const queryClient = useQueryClient();
-    const { isPending, mutate } = useMutation({
+    const [page, setPage] = useState(initialPage);
 
+    const { isPending, mutate } = useMutation({
         mutationFn: addEarthquake,
         mutationKey: ["addEarthquake"],
         onSuccess: (data) => {
-            toast.success(data.message)
-            queryClient.invalidateQueries({ queryKey: ["earthquake"] })
+            toast.success(data.message);
+            queryClient.invalidateQueries({ queryKey: ["earthquake"] });
         },
-        onError: (error) => {
-            console.log(error)
-            toast.error(error.message)
-        }
-    })
-    const { eqdb, eqdberror, eqdbloading } = useEarthquakedb()
+        onError: (error: any) => {
+            console.log(error);
+            toast.error(error.message);
+        },
+    });
 
+    const { eqdb } = useEarthquakedb();
 
     function handleaddEarthqueke(eq: any) {
-        const { id,
-            magnitude,
-            place,
-            time,
-            url, } = eq
+        const { id, magnitude, place, time, url } = eq;
         mutate({
             id,
             magnitude,
@@ -56,7 +64,7 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
             latitude: eq.coordinates.lat,
             longitude: eq.coordinates.lon,
             url,
-        })
+        });
     }
 
     const { earthquake, earthquakeloading, earthquekeerr } = useEarthQuake({
@@ -64,9 +72,10 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
         page,
         limit,
         search,
-    })
+    });
 
-
+    const total = earthquake?.total || 0;
+    const totalPages = Math.ceil(total / limit);
 
     return (
         <>
@@ -85,16 +94,18 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
                                 <TableRow>
                                     <TableHead>Magnitude</TableHead>
                                     <TableHead>Location</TableHead>
-                                    <TableHead>Source </TableHead>
+                                    <TableHead>Source</TableHead>
                                     <TableHead>Time</TableHead>
                                     <TableHead>Depth (km)</TableHead>
-                                    <TableHead>Save for Analytics </TableHead>
+                                    <TableHead>Save for Analytics</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {earthquake?.earthquakes?.length > 0 ? (
                                     earthquake.earthquakes.map((eq: any) => {
-                                        const existsInDb = eqdb?.some((dbEq: any) => dbEq.id === eq.id);
+                                        const existsInDb = eqdb?.some(
+                                            (dbEq: any) => dbEq.id === eq.id
+                                        );
 
                                         return (
                                             <TableRow
@@ -106,18 +117,42 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
                                                 </TableCell>
                                                 <TableCell>{eq.place}</TableCell>
                                                 <TableCell>
-                                                    <a target="_blank" href={eq.url}>click here</a>
+                                                    <a
+                                                        target="_blank"
+                                                        href={eq.url}
+                                                    >
+                                                        click here
+                                                    </a>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {new Date(eq.time).toLocaleString()}
+                                                    {new Date(
+                                                        eq.time
+                                                    ).toLocaleString()}
                                                 </TableCell>
-                                                <TableCell>{eq.coordinates.depth} km</TableCell>
+                                                <TableCell>
+                                                    {eq.coordinates.depth} km
+                                                </TableCell>
                                                 <TableCell>
                                                     <Button
-                                                        onClick={() => handleaddEarthqueke(eq)}
-                                                        disabled={isPending || existsInDb}
+                                                        onClick={() =>
+                                                            handleaddEarthqueke(
+                                                                eq
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            isPending ||
+                                                            existsInDb
+                                                        }
                                                     >
-                                                        {existsInDb ? <><Save /> Saved</> : <><Save /> Save</>}
+                                                        {existsInDb ? (
+                                                            <>
+                                                                <Save /> Saved
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Save /> Save
+                                                            </>
+                                                        )}
                                                     </Button>
                                                 </TableCell>
                                             </TableRow>
@@ -125,17 +160,44 @@ export default function EarthquakeList({ location, page, limit, search }: { loca
                                     })
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center">
+                                        <TableCell
+                                            colSpan={6}
+                                            className="text-center"
+                                        >
                                             No earthquakes found
                                         </TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
-
                         </Table>
                     </CardContent>
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <CardFooter className="flex justify-between items-center">
+                            <Button
+                                variant="outline"
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                disabled={page === 1}
+                            >
+                                Previous
+                            </Button>
+                            <span>
+                                Page {page} of {totalPages}
+                            </span>
+                            <Button
+                                variant="outline"
+                                onClick={() =>
+                                    setPage((p) => Math.min(totalPages, p + 1))
+                                }
+                                disabled={page === totalPages}
+                            >
+                                Next
+                            </Button>
+                        </CardFooter>
+                    )}
                 </Card>
             )}
         </>
-    )
+    );
 }

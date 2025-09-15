@@ -11,8 +11,9 @@ import spaceRoutes from "./routes/spaceRoutes";
 import spaceDataRoute from "./routes/spaceDataRoute";
 import aiRoutes from "./routes/aiRoutes";
 import paymentRoutes from "./routes/paymentRoutes";
+import adminRoute from "./routes/AdminRoute";
 import { logApiRequest } from "./middleware/logApiRequests";
-import { protectedRoute } from "./auth/auth.controller";
+
 pool
   .connect()
   .then((client) => {
@@ -20,11 +21,13 @@ pool
     client.release();
   })
   .catch((err) => {
-    console.error("❌ Database connection error:", err.message);
+    console.error("❌ Database connection error:", err);
   });
 
 const app = express();
-app.use(protectedRoute);
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms")
+// );
 app.use(logApiRequest);
 app.use(
   "/api/payment/webhook",
@@ -34,13 +37,12 @@ app.use(
 
 app.use(express.json());
 app.use(cors());
-
+app.use("/api/admin", adminRoute);
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/earth", earthRoutes);
 app.use("/api/space", spaceRoutes);
 app.use("/api/space-data", spaceDataRoute);
-
 app.use("/api/payment", paymentRoutes);
 
 const PORT = process.env.PORT ?? 5000;

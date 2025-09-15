@@ -35,7 +35,7 @@ export default function VerifyOtp() {
         localStorage.setItem("refresh_token", session.refresh_token);
         localStorage.setItem("expires_at", session.expires_at);
 
-        dispatch(loginSuccess({ email: params.email ?? "" }));
+        dispatch(loginSuccess({ email: params.email }));
         navigate(`/dashboard`);
       }
 

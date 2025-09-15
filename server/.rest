@@ -1,4 +1,4 @@
-get http://localhost:8000/api/earth/earthquake?lat=38&lng=13
+get http://localhost:8000/api/admin/analytics
 Content-Type: application/json
 
 

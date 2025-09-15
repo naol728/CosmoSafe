@@ -15,8 +15,8 @@ const spaceRoutes_1 = __importDefault(require("./routes/spaceRoutes"));
 const spaceDataRoute_1 = __importDefault(require("./routes/spaceDataRoute"));
 const aiRoutes_1 = __importDefault(require("./routes/aiRoutes"));
 const paymentRoutes_1 = __importDefault(require("./routes/paymentRoutes"));
+const AdminRoute_1 = __importDefault(require("./routes/AdminRoute"));
 const logApiRequests_1 = require("./middleware/logApiRequests");
-const auth_controller_1 = require("./auth/auth.controller");
 db_1.pool
     .connect()
     .then((client) => {
@@ -24,14 +24,17 @@ db_1.pool
     client.release();
 })
     .catch((err) => {
-    console.error("❌ Database connection error:", err.message);
+    console.error("❌ Database connection error:", err);
 });
 const app = (0, express_1.default)();
-app.use(auth_controller_1.protectedRoute);
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms")
+// );
 app.use(logApiRequests_1.logApiRequest);
 app.use("/api/payment/webhook", express_1.default.raw({ type: "application/json" }), paymentRoutes_1.default);
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use("/api/admin", AdminRoute_1.default);
 app.use("/api/auth", auth_routes_1.default);
 app.use("/api/ai", aiRoutes_1.default);
 app.use("/api/earth", earthRoute_1.default);
