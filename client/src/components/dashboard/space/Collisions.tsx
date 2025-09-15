@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { AlertCircle, Save, Satellite, Activity, Gauge, Calendar } from "lucide-react";
+import { AlertCircle, Save, Satellite, Activity, Gauge, Calendar, Loader2 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createCollisionAlert, fetchCollisionAlerts, getUserCollision } from '@/services/spaceService';
 import { toast } from "sonner";
@@ -52,7 +52,10 @@ export default function Collisions() {
       </CardHeader>
       <CardContent>
         {collisionLoading || usercollisionsLoading ? (
-          <p className="text-gray-400">Loading...</p>
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading ...</span>
+          </div>
         ) : collisions?.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {collisions.map((c, i) => {

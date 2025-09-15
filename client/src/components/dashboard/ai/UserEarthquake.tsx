@@ -15,7 +15,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteUserEarthQuake } from "@/services/earthService";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 export default function UserEarthquake() {
     const { eqdb, eqdberror, eqdbloading } = useEarthquakedb();
@@ -33,7 +33,10 @@ export default function UserEarthquake() {
     });
 
     if (eqdbloading)
-        return <p className="text-muted-foreground">Loading earthquakes...</p>;
+        return <div className="flex justify-center items-center py-10">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading...</span>
+        </div>
     if (eqdberror)
         return <p className="text-red-500">❌ Failed to load earthquakes.</p>;
 

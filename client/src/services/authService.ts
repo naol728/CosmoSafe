@@ -4,8 +4,12 @@ import apiClient from "./apiClient";
 const AUTH_ENDPOINT = "/auth";
 
 export const requestOtp = async ({ email }: { email: string }) => {
-  const res = await apiClient.post(`${AUTH_ENDPOINT}/request-otp`, { email });
-  return res;
+  try {
+    const res = await apiClient.post(`${AUTH_ENDPOINT}/request-otp`, { email });
+    return res;
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
 };
 
 export const verifyOtp = async ({
@@ -15,11 +19,15 @@ export const verifyOtp = async ({
   email: string;
   token: string;
 }) => {
-  const res = await apiClient.post(`${AUTH_ENDPOINT}/verify-otp`, {
-    email,
-    token,
-  });
-  return res;
+  try {
+    const res = await apiClient.post(`${AUTH_ENDPOINT}/verify-otp`, {
+      email,
+      token,
+    });
+    return res;
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
 };
 
 export const me = async () => {

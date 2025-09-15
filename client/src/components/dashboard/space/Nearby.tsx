@@ -2,7 +2,7 @@
 import { createNeoAlert, fetchNearByObjects, getUserNeoObject } from '@/services/spaceService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Globe, Save, Zap, Calendar, Gauge, ArrowRight, Shield } from "lucide-react";
+import { Globe, Save, Zap, Calendar, Gauge, ArrowRight, Shield, Loader2 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import useUserNeoObject from '@/hooks/spacehooks/useUserNeoObject';
@@ -60,7 +60,10 @@ export default function Nearby() {
             </CardHeader>
             <CardContent>
                 {nearbyLoading || userNeoLoading ? (
-                    <p className="text-gray-400">Loading...</p>
+                    <div className="flex justify-center items-center py-10">
+                        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                        <span className="ml-2 text-muted-foreground">Loading ...</span>
+                    </div>
                 ) : nearbyObjects?.length ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {nearbyObjects.map((obj) => {
