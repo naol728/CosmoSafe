@@ -1,5 +1,5 @@
 import LandingPage from "@/page/landing/LandingPage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import LoginPage from "@/page/auth/SendOtp";
 import VarifyOtp from "./page/auth/VarifyOtp";
 import { Toaster } from "sonner";
@@ -27,14 +27,15 @@ import AdminLayout from "./page/dashboard/AdminLayout";
 
 function App() {
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   useEffect(() => {
-    dispatch(fetchUser());
+    dispatch(fetchUser())
   }, [dispatch]);
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <>
+      <Routes key={location.pathname}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/varify-otp/:email" element={<VarifyOtp />} />
@@ -70,7 +71,7 @@ function App() {
 
       </Routes>
       <Toaster position="top-center" />
-    </BrowserRouter>
+    </>
   );
 }
 

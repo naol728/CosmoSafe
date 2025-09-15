@@ -25,8 +25,9 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { useAppSelector } from "@/store/hook"
+import { useAppDispatch, useAppSelector } from "@/store/hook"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { logout } from "@/store/slices/authSlice"
 
 const items = [
     { title: "Home", url: "/dashboard", icon: Home },
@@ -46,8 +47,12 @@ const adminitems = [
 
 export function AppSidebar() {
     const user = useAppSelector((state) => state.auth.user)
+    const dispatch = useAppDispatch()
     const [isOpen, setIsOpen] = useState(false)
     const location = useLocation()
+    const handlelogout = () => {
+        dispatch(logout())
+    }
 
     return (
         <Sidebar className="w-72 bg-gradient-to-b from-black/90 via-purple-950/60 to-black/95 text-foreground border-r border-white/10 backdrop-blur-xl flex flex-col">
@@ -149,7 +154,7 @@ export function AppSidebar() {
                     </div>
 
                     <CollapsibleContent className="overflow-hidden transition-all data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
-                        <Button variant="ghost" className="w-full flex items-center justify-center gap-2 text-pink-400 hover:bg-pink-500/10 hover:text-pink-300">
+                        <Button variant="ghost" className="w-full flex items-center justify-center gap-2 text-pink-400 hover:bg-pink-500/10 hover:text-pink-300" onClick={handlelogout}>
                             <LogOut className="h-5 w-5" />
                             Logout
                         </Button>

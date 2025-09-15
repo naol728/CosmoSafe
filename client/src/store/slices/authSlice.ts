@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
 import { me } from "@/services/authService";
 
 interface User {
@@ -50,7 +49,8 @@ const authSlice = createSlice({
       state.error = null;
     },
     logout: (state) => {
-      Cookies.remove("session");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       state.user = null;
       state.isAuthenticated = false;
       state.error = null;

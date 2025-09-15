@@ -5,31 +5,41 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Tooltip, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Legend } from "recharts";
 import { Users, AlertTriangle, Activity, Database } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getAnalytics } from "@/services/admin";
+import { Loading } from "@/components/Loading";
 
 export default function AdminAnalytics() {
-    // Example mock data
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ["getAnalytics"],
+        queryFn: getAnalytics,
+    });
+
+    if (isLoading) return <Loading />;
+    if (isError || !data?.success) return <div>Failed to load analytics</div>;
+
+    const stats = data.data;
+
+    // Prepare chart data
     const userGrowth = [
-        { month: "Jan", users: 200 },
-        { month: "Feb", users: 400 },
-        { month: "Mar", users: 800 },
-        { month: "Apr", users: 1200 },
-        { month: "May", users: 1500 },
+        { month: "Jan", users: 0 },
+        { month: "Feb", users: 0 },
+        { month: "Mar", users: 0 },
+        { month: "Apr", users: 0 },
+        { month: "May", users: 5 },
     ];
 
     const disasterReports = [
-        { type: "Earthquake", count: 12 },
-        { type: "Flood", count: 8 },
-        { type: "Wildfire", count: 6 },
-        { type: "Storm", count: 4 },
+        { type: "Earthquake", count: stats.earthquakes },
+        { type: "Flood", count: stats.disasters },
+        { type: "Wildfire", count: stats.collisionAlerts },
+        { type: "Storm", count: stats.neoAlerts },
     ];
 
-    const systemUsage = [
-        { day: "Mon", requests: 2000 },
-        { day: "Tue", requests: 2500 },
-        { day: "Wed", requests: 1800 },
-        { day: "Thu", requests: 3000 },
-        { day: "Fri", requests: 2200 },
-    ];
+    const systemUsage = stats.apiRequestsLast7Days.map((item: any) => ({
+        day: item.date,
+        requests: item.count,
+    }));
 
     return (
         <div className="p-6 space-y-6">
@@ -42,7 +52,7 @@ export default function AdminAnalytics() {
                         <CardTitle className="text-sm font-medium">Total Users</CardTitle>
                         <Users className="h-5 w-5 text-blue-500" />
                     </CardHeader>
-                    <CardContent className="text-2xl font-bold">12,430</CardContent>
+                    <CardContent className="text-2xl font-bold">{stats.users.total}</CardContent>
                 </Card>
 
                 <Card className="shadow-md">
@@ -50,15 +60,15 @@ export default function AdminAnalytics() {
                         <CardTitle className="text-sm font-medium">Premium Users</CardTitle>
                         <Activity className="h-5 w-5 text-green-500" />
                     </CardHeader>
-                    <CardContent className="text-2xl font-bold">2,150</CardContent>
+                    <CardContent className="text-2xl font-bold">{stats.users.premium}</CardContent>
                 </Card>
 
                 <Card className="shadow-md">
                     <CardHeader className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium">Disaster Alerts</CardTitle>
+                        <CardTitle className="text-sm font-medium">Total Revinue</CardTitle>
                         <AlertTriangle className="h-5 w-5 text-red-500" />
                     </CardHeader>
-                    <CardContent className="text-2xl font-bold">30</CardContent>
+                    <CardContent className="text-2xl font-bold">${stats.users.premium * 25}</CardContent>
                 </Card>
 
                 <Card className="shadow-md">
@@ -66,7 +76,7 @@ export default function AdminAnalytics() {
                         <CardTitle className="text-sm font-medium">API Requests</CardTitle>
                         <Database className="h-5 w-5 text-purple-500" />
                     </CardHeader>
-                    <CardContent className="text-2xl font-bold">18,940</CardContent>
+                    <CardContent className="text-2xl font-bold">{stats.apiRequests}</CardContent>
                 </Card>
             </div>
 
@@ -121,7 +131,7 @@ export default function AdminAnalytics() {
                 <TabsContent value="system">
                     <Card>
                         <CardHeader>
-                            <CardTitle>System API Usage</CardTitle>
+                            <CardTitle>System API Usage (Last 7 Days)</CardTitle>
                         </CardHeader>
                         <CardContent className="h-72">
                             <ResponsiveContainer width="100%" height="100%">

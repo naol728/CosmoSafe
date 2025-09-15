@@ -12,11 +12,11 @@ export interface Message {
 }
 
 interface AiChatProps {
-    metadata?: any; // extra context data
-    title?: string; // customizable title
-    description?: string; // customizable description
-    placeholder?: string; // customizable input placeholder
-    className?: string; // optional wrapper styling
+    metadata?: any;
+    title?: string;
+    description?: string;
+    placeholder?: string;
+    className?: string;
 }
 
 export default function AiChat({
@@ -52,7 +52,7 @@ export default function AiChat({
         const queryParams = encodeURIComponent(queryPayload);
 
         const eventSource = new EventSource(
-            `http://localhost:8000/api/ai/ai-stream?payload=${queryParams}`
+            `${import.meta.env.VITE_API_BASE_URL!}/ai/ai-stream?payload=${queryParams}`
         );
         eventSourceRef.current = eventSource;
 
