@@ -55,7 +55,7 @@ export function AppSidebar() {
     }
 
     return (
-        <Sidebar className="w-72 bg-gradient-to-b from-black/90 via-purple-950/60 to-black/95 text-foreground border-r border-white/10 backdrop-blur-xl flex flex-col">
+        <Sidebar className="w-64 bg-gradient-to-b from-black/90 via-purple-950/60 to-black/95 text-foreground border-r border-white/10 backdrop-blur-xl flex flex-col">
             <SidebarContent className="flex-1">
                 <SidebarGroup>
                     <SidebarGroupLabel className="flex items-center gap-2 text-2xl font-extrabold tracking-wide text-pink-400 py-8">
