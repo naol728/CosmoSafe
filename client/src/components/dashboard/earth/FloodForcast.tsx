@@ -1,3 +1,6 @@
+/* eslint-disable */
+"use client";
+
 import { motion } from "framer-motion";
 import {
     LineChart,
@@ -47,70 +50,77 @@ export default function FloodForecast({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="w-full"
         >
             {floodloading ? (
-                <Skeleton className="h-[500px] w-full rounded-xl" />
+                <Skeleton className="h-72 sm:h-96 w-full rounded-xl" />
             ) : flooderr ? (
-                <p className="text-destructive">Error loading flood forecast</p>
+                <p className="text-destructive text-center mt-4">Error loading flood forecast</p>
             ) : floodData.length > 0 ? (
-                <Card className="bg-gradient-to-br from-gray-900/90 via-pink-900/50 to-purple-900/50 border border-gray-700 shadow-lg hover:shadow-2xl transition-shadow rounded-xl overflow-hidden">
-                    <CardHeader className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-bold flex items-center gap-2 text-pink-400">
+                <Card className="bg-gradient-to-br from-gray-900/90 via-pink-900/50 to-purple-900/50 border border-gray-700 shadow-lg hover:shadow-2xl transition-shadow rounded-xl overflow-hidden w-full">
+                    <CardHeader className="flex flex-col sm:flex-row items-center justify-between px-4 pt-4 pb-2 gap-2 sm:gap-0">
+                        <CardTitle className="text-lg sm:text-xl font-bold flex items-center gap-2 text-pink-400 text-center sm:text-left">
                             🌊 Flood Risk Forecast
                         </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={350}>
-                            <LineChart
-                                data={floodData}
-                                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
-                                <XAxis
-                                    dataKey="date"
-                                    tick={{ fill: "#f9a8d4", fontSize: 12 }}
-                                />
-                                <YAxis
-                                    tick={{ fill: "#f9a8d4", fontSize: 12 }}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: "#111827",
-                                        borderRadius: 8,
-                                        border: "none",
-                                        color: "#fff",
-                                    }}
-                                    itemStyle={{ color: "#fff" }}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="discharge"
-                                    stroke="#f472b6"
-                                    strokeWidth={3}
-                                    dot={{ r: 4, stroke: "#f472b6", strokeWidth: 2 }}
-                                    activeDot={{ r: 6 }}
-                                    name="River Discharge"
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="mean"
-                                    stroke="#c084fc"
-                                    strokeWidth={3}
-                                    dot={{ r: 4, stroke: "#c084fc", strokeWidth: 2 }}
-                                    activeDot={{ r: 6 }}
-                                    name="Mean Discharge"
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
+                    <CardContent className="px-2 sm:px-4 pb-4 flex flex-col">
+                        {/* Scrollable container for small screens */}
+                        <div className="w-full overflow-x-auto">
+                            <div className="min-w-[600px] h-72 sm:h-96">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart
+                                        data={floodData}
+                                        margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#4b5563" />
+                                        <XAxis
+                                            dataKey="date"
+                                            tick={{ fill: "#f9a8d4", fontSize: 10 }}
+                                            interval="preserveStartEnd"
+                                            angle={-45}
+                                            textAnchor="end"
+                                        />
+                                        <YAxis tick={{ fill: "#f9a8d4", fontSize: 10 }} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: "#111827",
+                                                borderRadius: 8,
+                                                border: "none",
+                                                color: "#fff",
+                                            }}
+                                            itemStyle={{ color: "#fff" }}
+                                        />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="discharge"
+                                            stroke="#f472b6"
+                                            strokeWidth={3}
+                                            dot={{ r: 3, stroke: "#f472b6", strokeWidth: 2 }}
+                                            activeDot={{ r: 5 }}
+                                            name="River Discharge"
+                                        />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="mean"
+                                            stroke="#c084fc"
+                                            strokeWidth={3}
+                                            dot={{ r: 3, stroke: "#c084fc", strokeWidth: 2 }}
+                                            activeDot={{ r: 5 }}
+                                            name="Mean Discharge"
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
 
-                        <div className="mt-4 flex justify-around text-sm text-gray-300">
+                        <div className="mt-4 flex flex-col sm:flex-row justify-around text-sm sm:text-base text-gray-300 gap-2 sm:gap-4">
                             <span className="flex items-center gap-1 text-pink-400">🌊 River Discharge</span>
                             <span className="flex items-center gap-1 text-purple-400">📈 Mean Discharge</span>
                         </div>
                     </CardContent>
                 </Card>
             ) : (
-                <p className="text-gray-300">No flood forecast data available</p>
+                <p className="text-gray-300 text-center mt-4">No flood forecast data available</p>
             )}
         </motion.div>
     );
