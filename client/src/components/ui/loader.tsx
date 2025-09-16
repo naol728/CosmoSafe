@@ -1,95 +1,51 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, easeInOut } from "framer-motion";
 import React from "react";
 
 export const LoaderOne = () => {
-  const transition = (x: number) => {
-    return {
-      duration: 1,
-      repeat: Infinity,
-      repeatType: "loop" as const,
-      delay: x * 0.2,
-      ease: "easeInOut",
-    };
-  };
+  const transition = (x: number) => ({
+    duration: 1,
+    repeat: Infinity,
+    repeatType: "loop" as const,
+    delay: x * 0.2,
+    ease: easeInOut,
+  });
+
   return (
     <div className="flex items-center gap-2">
-      <motion.div
-        initial={{
-          y: 0,
-        }}
-        animate={{
-          y: [0, 10, 0],
-        }}
-        transition={transition(0)}
-        className="h-4 w-4 rounded-full border border-neutral-300 bg-gradient-to-b from-neutral-400 to-neutral-300"
-      />
-      <motion.div
-        initial={{
-          y: 0,
-        }}
-        animate={{
-          y: [0, 10, 0],
-        }}
-        transition={transition(1)}
-        className="h-4 w-4 rounded-full border border-neutral-300 bg-gradient-to-b from-neutral-400 to-neutral-300"
-      />
-      <motion.div
-        initial={{
-          y: 0,
-        }}
-        animate={{
-          y: [0, 10, 0],
-        }}
-        transition={transition(2)}
-        className="h-4 w-4 rounded-full border border-neutral-300 bg-gradient-to-b from-neutral-400 to-neutral-300"
-      />
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          initial={{ y: 0 }}
+          animate={{ y: [0, 10, 0] }}
+          transition={transition(i)}
+          className="h-4 w-4 rounded-full border border-neutral-300 bg-gradient-to-b from-neutral-400 to-neutral-300"
+        />
+      ))}
     </div>
   );
 };
 
 export const LoaderTwo = () => {
-  const transition = (x: number) => {
-    return {
-      duration: 2,
-      repeat: Infinity,
-      repeatType: "loop" as const,
-      delay: x * 0.2,
-      ease: "easeInOut",
-    };
-  };
+  const transition = (x: number) => ({
+    duration: 2,
+    repeat: Infinity,
+    repeatType: "loop" as const,
+    delay: x * 0.2,
+    ease: easeInOut,
+  });
+
   return (
     <div className="flex items-center">
-      <motion.div
-        transition={transition(0)}
-        initial={{
-          x: 0,
-        }}
-        animate={{
-          x: [0, 20, 0],
-        }}
-        className="h-4 w-4 rounded-full bg-neutral-200 shadow-md dark:bg-neutral-500"
-      />
-      <motion.div
-        initial={{
-          x: 0,
-        }}
-        animate={{
-          x: [0, 20, 0],
-        }}
-        transition={transition(0.4)}
-        className="h-4 w-4 -translate-x-2 rounded-full bg-neutral-200 shadow-md dark:bg-neutral-500"
-      />
-      <motion.div
-        initial={{
-          x: 0,
-        }}
-        animate={{
-          x: [0, 20, 0],
-        }}
-        transition={transition(0.8)}
-        className="h-4 w-4 -translate-x-4 rounded-full bg-neutral-200 shadow-md dark:bg-neutral-500"
-      />
+      {[0, 0.4, 0.8].map((delay, i) => (
+        <motion.div
+          key={i}
+          initial={{ x: 0 }}
+          animate={{ x: [0, 20, 0] }}
+          transition={transition(delay)}
+          className={`h-4 w-4 rounded-full bg-neutral-200 shadow-md dark:bg-neutral-500 -translate-x-${i * 2}`}
+        />
+      ))}
     </div>
   );
 };
@@ -114,7 +70,7 @@ export const LoaderThree = () => {
         animate={{ pathLength: 1, fill: "var(--fill-final)" }}
         transition={{
           duration: 2,
-          ease: "easeInOut",
+          ease: easeInOut,
           repeat: Infinity,
           repeatType: "reverse",
         }}
@@ -129,7 +85,7 @@ export const LoaderFour = ({ text = "Loading..." }: { text?: string }) => {
     <div className="relative font-bold text-black [perspective:1000px] dark:text-white">
       <motion.span
         animate={{
-          skew: [0, -40, 0],
+          skewX: [0, -40, 0], // ✅ fixed
           scaleX: [1, 2, 1],
         }}
         transition={{
@@ -204,7 +160,7 @@ export const LoaderFive = ({ text }: { text: string }) => {
             repeat: Infinity,
             repeatType: "loop",
             delay: i * 0.05,
-            ease: "easeInOut",
+            ease: easeInOut,
             repeatDelay: 2,
           }}
         >
