@@ -45,7 +45,7 @@ app.use("/api/space", spaceRoutes);
 app.use("/api/space-data", spaceDataRoute);
 app.use("/api/payment", paymentRoutes);
 
-const PORT = process.env.PORT ?? 5000;
+const PORT = 7000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
