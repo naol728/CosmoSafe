@@ -1,4 +1,6 @@
 /* eslint-disable */
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,8 +10,13 @@ import { useDisaster } from "@/hooks/earthhooks/useDisaster";
 import useUserDisaster from "@/hooks/earthhooks/useUserDisaster";
 import { addDisaster } from "@/services/earthService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Save } from "lucide-react";
+import { Save, Map as MapIcon } from "lucide-react";
 import { toast } from "sonner";
+import Map, { Marker } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+
+
+import { useState } from "react";
 
 export default function DisasterList({
     location,
@@ -28,12 +35,7 @@ export default function DisasterList({
         disaster: disasters,
         loadingdiaster: disastersLoading,
         disastererr: disastersError,
-    } = useDisaster({
-        location,
-        page,
-        limit,
-        search,
-    });
+    } = useDisaster({ location, page, limit, search });
 
     const queryClient = useQueryClient();
     const { userdisaster } = useUserDisaster();
@@ -61,6 +63,13 @@ export default function DisasterList({
 
     const paginatedDisasters = disasters?.slice((page - 1) * perPage, page * perPage);
 
+    // State for toggling maps
+    const [openMaps, setOpenMaps] = useState<Record<string, boolean>>({});
+
+    const toggleMap = (id: string) => {
+        setOpenMaps((prev) => ({ ...prev, [id]: !prev[id] }));
+    };
+
     return (
         <>
             {disastersLoading ? (
@@ -82,7 +91,7 @@ export default function DisasterList({
                                     <TableHead>Coordinates</TableHead>
                                     <TableHead>Sources</TableHead>
                                     <TableHead>Magnitude</TableHead>
-                                    <TableHead>Save</TableHead>
+                                    <TableHead>Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -100,64 +109,101 @@ export default function DisasterList({
                                             (ud: any) => ud.id === d.id
                                         );
 
+                                        const [lon, lat] = coords;
+
                                         return (
-                                            <TableRow key={d.id} className="hover:bg-muted/50 transition-colors">
-                                                <TableCell>
-                                                    <a
-                                                        href={d.link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-blue-600 hover:underline"
-                                                    >
-                                                        {d.title}
-                                                    </a>
-                                                </TableCell>
-                                                <TableCell>{categoryTitle || "N/A"}</TableCell>
-                                                <TableCell>{date}</TableCell>
-                                                <TableCell>
-                                                    {coords.length === 2
-                                                        ? `${coords[1].toFixed(4)}, ${coords[0].toFixed(4)}`
-                                                        : "N/A"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {d.sources?.map((s: any, idx: number) => (
-                                                        <div key={idx}>
-                                                            <a
-                                                                href={s.url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:underline"
-                                                            >
-                                                                {s.id}
-                                                            </a>
-                                                        </div>
-                                                    )) || "N/A"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {categoryId === "wildfires"
-                                                        ? "N/A"
-                                                        : firstGeometry?.magnitudeValue
-                                                            ? `${firstGeometry.magnitudeValue} ${firstGeometry.magnitudeUnit || ""
-                                                            }`
+                                            <>
+                                                <TableRow key={d.id} className="hover:bg-muted/50 transition-colors">
+                                                    <TableCell>
+                                                        <a
+                                                            href={d.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-blue-600 hover:underline"
+                                                        >
+                                                            {d.title}
+                                                        </a>
+                                                    </TableCell>
+                                                    <TableCell>{categoryTitle || "N/A"}</TableCell>
+                                                    <TableCell>{date}</TableCell>
+                                                    <TableCell>
+                                                        {coords.length === 2
+                                                            ? `${lat.toFixed(4)}, ${lon.toFixed(4)}`
                                                             : "N/A"}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        onClick={() => handleAddDisaster(d)}
-                                                        disabled={isPending || isSaved}
-                                                    >
-                                                        {isSaved ? (
-                                                            <>
-                                                                <Save /> Saved
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Save /> Save
-                                                            </>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {d.sources?.map((s: any, idx: number) => (
+                                                            <div key={idx}>
+                                                                <a
+                                                                    href={s.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-blue-600 hover:underline"
+                                                                >
+                                                                    {s.id}
+                                                                </a>
+                                                            </div>
+                                                        )) || "N/A"}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {categoryId === "wildfires"
+                                                            ? "N/A"
+                                                            : firstGeometry?.magnitudeValue
+                                                                ? `${firstGeometry.magnitudeValue} ${firstGeometry.magnitudeUnit || ""
+                                                                }`
+                                                                : "N/A"}
+                                                    </TableCell>
+                                                    <TableCell className="flex gap-2">
+                                                        <Button
+                                                            onClick={() => handleAddDisaster(d)}
+                                                            disabled={isPending || isSaved}
+                                                        >
+                                                            {isSaved ? (
+                                                                <>
+                                                                    <Save /> Saved
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Save /> Save
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                        {coords.length === 2 && (
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={() => toggleMap(d.id)}
+                                                            >
+                                                                <MapIcon className="mr-1 h-4 w-4" />
+                                                                {openMaps[d.id] ? "Hide Map" : "Show Map"}
+                                                            </Button>
                                                         )}
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
+                                                    </TableCell>
+                                                </TableRow>
+
+                                                {/* Map Row */}
+                                                {openMaps[d.id] && coords.length === 2 && (
+                                                    <TableRow>
+                                                        <TableCell colSpan={7}>
+                                                            <div className="h-[300px] w-full rounded-lg overflow-hidden border">
+                                                                <Map
+                                                                    mapboxAccessToken={import.meta.env.VITE_PUBLIC_MAPBOX_TOKEN}
+                                                                    initialViewState={{
+                                                                        longitude: lon,
+                                                                        latitude: lat,
+                                                                        zoom: 5,
+                                                                    }}
+                                                                    style={{ width: "100%", height: "100%" }}
+                                                                    mapStyle="mapbox://styles/mapbox/streets-v11"
+                                                                >
+                                                                    <Marker longitude={lon} latitude={lat} />
+                                                                </Map>
+
+
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </>
                                         );
                                     })
                                 ) : (
