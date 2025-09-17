@@ -1,10 +1,13 @@
-import { motion } from "framer-motion";
+/* eslint-disable */
+"use client";
+
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
     LineChart,
     Line,
@@ -14,7 +17,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from "recharts";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useWeather } from "@/hooks/earthhooks/useWeather";
 
 export default function WeatherForecast({
@@ -42,68 +44,93 @@ export default function WeatherForecast({
             rain: weather.daily.precipitation_sum[i],
         })) ?? [];
 
-    return (
-        <motion.div
+    if (weatherloading)
+        return <Skeleton className="h-72 sm:h-96 w-full rounded-xl" />;
+    if (weathererr)
+        return (
+            <p className="text-destructive text-center mt-4">
+                Error loading weather forecast
+            </p>
+        );
+    if (weatherData.length === 0)
+        return (
+            <p className="text-muted-foreground text-center mt-4">
+                No weather data available
+            </p>
+        );
 
-        >
-            {weatherloading ? (
-                <Skeleton className="h-[500px] w-full rounded-xl" />
-            ) : weathererr ? (
-                <p className="text-destructive">Error loading weather forecast</p>
-            ) : weatherData.length > 0 ? (
-                <Card className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-pink-500/30 shadow-lg hover:shadow-2xl transition-shadow rounded-xl overflow-hidden">
-                    <CardHeader className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-bold flex items-center gap-2 text-pink-200">
-                            🌦️ 7-Day Weather Forecast
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={350}>
-                            <LineChart
-                                data={weatherData}
-                                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e0d7f5" />
-                                <XAxis dataKey="date" tick={{ fill: "#9ca3af", fontSize: 12 }} />
-                                <YAxis tick={{ fill: "#9ca3af", fontSize: 12 }} />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: "#1e293b",
-                                        borderRadius: 8,
-                                        border: "none",
-                                        color: "#fff",
-                                    }}
-                                    itemStyle={{ color: "#fff" }}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="temp"
-                                    stroke="#ec4899"
-                                    strokeWidth={3}
-                                    dot={{ r: 5, stroke: "#ec4899", strokeWidth: 2 }}
-                                    activeDot={{ r: 7 }}
-                                    name="Temp (°C)"
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="rain"
-                                    stroke="#8b5cf6"
-                                    strokeWidth={3}
-                                    dot={{ r: 5, stroke: "#8b5cf6", strokeWidth: 2 }}
-                                    activeDot={{ r: 7 }}
-                                    name="Rain (mm)"
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
-                        <div className="mt-4 flex justify-around text-sm text-gray-600">
-                            <span className="flex items-center gap-1 text-pink-500">🌡 Temp (°C)</span>
-                            <span className="flex items-center gap-1 text-purple-500">💧 Rain (mm)</span>
-                        </div>
-                    </CardContent>
-                </Card>
-            ) : (
-                <p className="text-muted-foreground">No weather data available</p>
-            )}
-        </motion.div>
+    return (
+        <Card className="bg-card border border-border shadow-lg hover:shadow-xl transition-shadow rounded-xl overflow-hidden w-full">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 pt-4 pb-2">
+                <CardTitle className="text-lg sm:text-xl font-bold text-primary flex items-center gap-2">
+                    🌦️ 7-Day Weather Forecast
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-2 sm:mt-0">
+                    Forecast updated daily
+                </p>
+            </CardHeader>
+
+            <CardContent className="px-2 sm:px-4 pb-4 flex flex-col gap-4">
+                {/* Responsive Chart */}
+                <div className="w-full h-64 sm:h-80 md:h-96">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                            data={weatherData}
+                            margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                            <XAxis
+                                dataKey="date"
+                                tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
+                                interval="preserveStartEnd"
+                                angle={-30}
+                                textAnchor="end"
+                                minTickGap={15}
+                            />
+                            <YAxis tick={{ fill: "var(--muted-foreground)", fontSize: 12 }} />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: "var(--card)",
+                                    borderRadius: 8,
+                                    border: "none",
+                                    color: "var(--foreground)",
+                                }}
+                                itemStyle={{ color: "var(--foreground)" }}
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="temp"
+                                stroke="var(--primary)"
+                                strokeWidth={3}
+                                dot={{ r: 4, stroke: "var(--primary)", strokeWidth: 2 }}
+                                activeDot={{ r: 6 }}
+                                name="Temp (°C)"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="rain"
+                                stroke="var(--secondary)"
+                                strokeWidth={3}
+                                dot={{ r: 4, stroke: "var(--secondary)", strokeWidth: 2 }}
+                                activeDot={{ r: 6 }}
+                                name="Rain (mm)"
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* Legend */}
+                <div className="mt-2 flex flex-col sm:flex-row justify-center sm:justify-around gap-2 sm:gap-4 text-sm sm:text-base">
+                    <span className="flex items-center gap-2 text-primary font-medium">
+                        🌡 Temp (°C)
+                        <div className="w-4 h-1 bg-primary rounded-full" />
+                    </span>
+                    <span className="flex items-center gap-2 text-secondary font-medium">
+                        💧 Rain (mm)
+                        <div className="w-4 h-1 bg-secondary rounded-full" />
+                    </span>
+                </div>
+            </CardContent>
+        </Card>
     );
 }
