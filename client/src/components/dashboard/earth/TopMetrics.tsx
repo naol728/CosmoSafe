@@ -1,7 +1,6 @@
 /* eslint-disable */
 "use client";
 
-import { motion } from "framer-motion";
 import {
     Card,
     CardContent,
@@ -103,56 +102,52 @@ export default function TopMetrics({
 
     return (
         <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
-            <h1 className="text-xl sm:text-4xl font-bold 
-    bg-gradient-to-r from-pink-400 to-red-400 
-    bg-clip-text text-transparent text-center sm:text-left">
+            {/* Dashboard Title */}
+            <h1 className="text-2xl sm:text-4xl font-extrabold 
+                bg-gradient-to-r from-pink-500 to-red-500 
+                bg-clip-text text-transparent text-center sm:text-left">
                 🌍 Earth Dashboard
             </h1>
 
-
+            {/* Metrics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, idx) => {
                     const Icon = card.icon;
                     return (
-                        <motion.div
+                        <Card
                             key={idx}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            whileHover={{ scale: 1.03 }}
+                            className={`bg-gradient-to-br ${card.gradient} ${card.border} 
+                                rounded-xl shadow-lg hover:shadow-2xl transition-shadow flex flex-col justify-between h-full`}
                         >
-                            <Card
-                                className={`bg-gradient-to-br ${card.gradient} ${card.border} rounded-xl shadow-lg hover:shadow-2xl transition-shadow flex flex-col justify-between h-full`}
-                            >
-                                <CardHeader className="flex items-center justify-between pb-2 px-4 pt-4">
-                                    <CardTitle className="text-sm sm:text-base font-medium line-clamp-2">
-                                        {card.title}
-                                    </CardTitle>
-                                    <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-current opacity-70" />
-                                </CardHeader>
-                                <CardContent className="px-4 pb-4 flex flex-col justify-between flex-1">
-                                    {card.loading ? (
-                                        <Skeleton className="h-20 w-full rounded-xl" />
-                                    ) : card.error ? (
-                                        <p className="text-destructive text-sm">Error loading data</p>
-                                    ) : (
-                                        <>
-                                            <div className="text-xl sm:text-2xl font-bold truncate">
-                                                {card.data} {card.unit || ""}
-                                            </div>
-                                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
-                                                {card.sub}
+                            <CardHeader className="flex items-center justify-between pb-2 px-4 pt-4">
+                                <CardTitle className="text-sm sm:text-base font-medium line-clamp-2">
+                                    {card.title}
+                                </CardTitle>
+                                <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-current opacity-80" />
+                            </CardHeader>
+
+                            <CardContent className="px-4 pb-4 flex flex-col justify-between flex-1">
+                                {card.loading ? (
+                                    <Skeleton className="h-20 w-full rounded-xl" />
+                                ) : card.error ? (
+                                    <p className="text-destructive text-sm text-center">Error loading data</p>
+                                ) : (
+                                    <>
+                                        <div className="text-xl sm:text-2xl font-bold truncate">
+                                            {card.data} {card.unit || ""}
+                                        </div>
+                                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2">
+                                            {card.sub}
+                                        </p>
+                                        {card.extra && (
+                                            <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-1">
+                                                {card.extra}
                                             </p>
-                                            {card.extra && (
-                                                <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
-                                                    {card.extra}
-                                                </p>
-                                            )}
-                                        </>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        </motion.div>
+                                        )}
+                                    </>
+                                )}
+                            </CardContent>
+                        </Card>
                     );
                 })}
             </div>
