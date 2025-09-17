@@ -1,4 +1,6 @@
 /* eslint-disable */
+"use client";
+
 import {
     Card,
     CardContent,
@@ -20,9 +22,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addEarthquake } from "@/services/earthService";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
+import { Save, Map as MapIcon } from "lucide-react";
 import useEarthquakedb from "@/hooks/earthhooks/useEarthquakedb";
 import { useState } from "react";
+
+import MapGL, { Marker } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 export default function EarthquakeList({
     location,
@@ -52,8 +57,24 @@ export default function EarthquakeList({
     });
 
     const { eqdb } = useEarthquakedb();
+    const { earthquake, earthquakeloading, earthquekeerr } = useEarthQuake({
+        location,
+        page,
+        limit,
+        search,
+    });
 
-    function handleaddEarthqueke(eq: any) {
+    const total = earthquake?.total || 0;
+    const totalPages = Math.ceil(total / limit);
+
+    // State for toggling maps
+    const [openMaps, setOpenMaps] = useState<Record<string, boolean>>({});
+
+    const toggleMap = (id: string) => {
+        setOpenMaps((prev) => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    function handleAddEarthquake(eq: any) {
         const { id, magnitude, place, time, url } = eq;
         mutate({
             id,
@@ -66,16 +87,6 @@ export default function EarthquakeList({
             url,
         });
     }
-
-    const { earthquake, earthquakeloading, earthquekeerr } = useEarthQuake({
-        location,
-        page,
-        limit,
-        search,
-    });
-
-    const total = earthquake?.total || 0;
-    const totalPages = Math.ceil(total / limit);
 
     return (
         <>
@@ -97,7 +108,8 @@ export default function EarthquakeList({
                                     <TableHead>Source</TableHead>
                                     <TableHead>Time</TableHead>
                                     <TableHead>Depth (km)</TableHead>
-                                    <TableHead>Save for Analytics</TableHead>
+                                    <TableHead>Save</TableHead>
+                                    <TableHead>Map</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -108,62 +120,91 @@ export default function EarthquakeList({
                                         );
 
                                         return (
-                                            <TableRow
-                                                key={eq.id}
-                                                className="hover:bg-muted/50 transition-colors"
-                                            >
-                                                <TableCell className="font-bold text-red-500">
-                                                    {eq.magnitude}
-                                                </TableCell>
-                                                <TableCell>{eq.place}</TableCell>
-                                                <TableCell>
-                                                    <a
-                                                        target="_blank"
-                                                        href={eq.url}
-                                                    >
-                                                        click here
-                                                    </a>
-                                                </TableCell>
-                                                <TableCell>
-                                                    {new Date(
-                                                        eq.time
-                                                    ).toLocaleString()}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {eq.coordinates.depth} km
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        onClick={() =>
-                                                            handleaddEarthqueke(
-                                                                eq
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            isPending ||
-                                                            existsInDb
-                                                        }
-                                                    >
-                                                        {existsInDb ? (
-                                                            <>
-                                                                <Save /> Saved
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Save /> Save
-                                                            </>
+                                            <>
+                                                <TableRow
+                                                    key={eq.id}
+                                                    className="hover:bg-muted/50 transition-colors"
+                                                >
+                                                    <TableCell className="font-bold text-red-500">
+                                                        {eq.magnitude}
+                                                    </TableCell>
+                                                    <TableCell>{eq.place}</TableCell>
+                                                    <TableCell>
+                                                        <a target="_blank" href={eq.url}>
+                                                            click here
+                                                        </a>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {new Date(eq.time).toLocaleString()}
+                                                    </TableCell>
+                                                    <TableCell>{eq.coordinates.depth} km</TableCell>
+                                                    <TableCell>
+                                                        <Button
+                                                            onClick={() => handleAddEarthquake(eq)}
+                                                            disabled={isPending || existsInDb}
+                                                        >
+                                                            {existsInDb ? (
+                                                                <>
+                                                                    <Save /> Saved
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Save /> Save
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {eq.coordinates.lat && eq.coordinates.lon && (
+                                                            <Button
+                                                                variant="outline"
+                                                                onClick={() => toggleMap(eq.id)}
+                                                                className="flex items-center gap-1"
+                                                            >
+                                                                <MapIcon className="w-4 h-4" />
+                                                                {openMaps[eq.id] ? "Hide Map" : "Show Map"}
+                                                            </Button>
                                                         )}
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
+                                                    </TableCell>
+                                                </TableRow>
+
+                                                {/* Map Row */}
+                                                {openMaps[eq.id] &&
+                                                    eq.coordinates.lat &&
+                                                    eq.coordinates.lon && (
+                                                        <TableRow>
+                                                            <TableCell colSpan={7}>
+                                                                <div className="h-[300px] w-full rounded-lg overflow-hidden border">
+                                                                    <MapGL
+                                                                        mapboxAccessToken={
+                                                                            import.meta.env
+                                                                                .VITE_PUBLIC_MAPBOX_TOKEN
+                                                                        }
+                                                                        initialViewState={{
+                                                                            longitude: eq.coordinates.lon,
+                                                                            latitude: eq.coordinates.lat,
+                                                                            zoom: 5,
+                                                                        }}
+                                                                        mapStyle="mapbox://styles/mapbox/streets-v11"
+                                                                        style={{ width: "100%", height: "100%" }}
+                                                                    >
+                                                                        <Marker
+                                                                            longitude={eq.coordinates.lon}
+                                                                            latitude={eq.coordinates.lat}
+                                                                        >
+                                                                            <div className="w-3 h-3 bg-red-500 rounded-full border border-white" />
+                                                                        </Marker>
+                                                                    </MapGL>
+                                                                </div>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                            </>
                                         );
                                     })
                                 ) : (
                                     <TableRow>
-                                        <TableCell
-                                            colSpan={6}
-                                            className="text-center"
-                                        >
+                                        <TableCell colSpan={7} className="text-center">
                                             No earthquakes found
                                         </TableCell>
                                     </TableRow>
@@ -187,9 +228,7 @@ export default function EarthquakeList({
                             </span>
                             <Button
                                 variant="outline"
-                                onClick={() =>
-                                    setPage((p) => Math.min(totalPages, p + 1))
-                                }
+                                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
                             >
                                 Next
